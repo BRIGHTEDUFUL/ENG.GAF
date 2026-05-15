@@ -7,15 +7,14 @@ use App\Models\Wing;
 
 class WingPolicy
 {
-    public function viewAny(User $user): bool
+    public function before(User $user, string $ability): bool|null
     {
-        return true;
+        if ($user->isAdmin()) return true;
+        return null;
     }
 
-    public function view(User $user, Wing $wing): bool
-    {
-        return true;
-    }
+    public function viewAny(User $user): bool { return true; }
+    public function view(User $user, Wing $wing): bool { return true; }
 
     public function create(User $user): bool
     {
@@ -30,5 +29,10 @@ class WingPolicy
     public function delete(User $user, Wing $wing): bool
     {
         return $user->isAdmin();
+    }
+
+    public function export(User $user): bool
+    {
+        return $user->hasRole(['admin', 'commander', 'auditor']);
     }
 }

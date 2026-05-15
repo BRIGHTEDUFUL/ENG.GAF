@@ -7,48 +7,32 @@ use App\Models\User;
 
 class PersonnelPolicy
 {
-    /**
-     * Determine whether the user can view any personnel records.
-     * Any authenticated user may list personnel.
-     */
-    public function viewAny(User $user): bool
+    public function before(User $user, string $ability): bool|null
     {
-        return true;
+        if ($user->isAdmin()) return true;
+        return null;
     }
 
-    /**
-     * Determine whether the user can view a specific personnel record.
-     * Any authenticated user may view a personnel record.
-     */
-    public function view(User $user, Personnel $personnel): bool
-    {
-        return true;
-    }
+    public function viewAny(User $user): bool { return true; }
+    public function view(User $user, Personnel $personnel): bool { return true; }
 
-    /**
-     * Determine whether the user can create personnel records.
-     * Only admins may create personnel.
-     */
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->hasRole(['admin', 'commander', 'supervisor']);
     }
 
-    /**
-     * Determine whether the user can update a personnel record.
-     * Only admins may update personnel.
-     */
     public function update(User $user, Personnel $personnel): bool
     {
-        return $user->isAdmin();
+        return $user->hasRole(['admin', 'commander', 'supervisor']);
     }
 
-    /**
-     * Determine whether the user can delete a personnel record.
-     * Only admins may delete personnel.
-     */
     public function delete(User $user, Personnel $personnel): bool
     {
         return $user->isAdmin();
+    }
+
+    public function export(User $user): bool
+    {
+        return true;
     }
 }
