@@ -88,7 +88,7 @@ class FlightLogManager extends Component
 
     public function render()
     {
-        $logs = FlightLog::with(['aircraft', 'pilot', 'coPilot'])
+        $flightLogs = FlightLog::with(['aircraft', 'pilot', 'coPilot'])
             ->when($this->search, fn($q) => $q->where('departure_location', 'like', "%{$this->search}%")
                                               ->orWhere('arrival_location', 'like', "%{$this->search}%")
                                               ->orWhereHas('aircraft', fn($q) => $q->where('tail_number', 'like', "%{$this->search}%")))
@@ -99,7 +99,7 @@ class FlightLogManager extends Component
         $aircraft = Aircraft::orderBy('tail_number')->get();
         $pilots = User::orderBy('name')->get(); 
 
-        return view('livewire.flight-log-manager', compact('logs', 'aircraft', 'pilots'))
+        return view('livewire.flight-log-manager', compact('flightLogs', 'aircraft', 'pilots'))
             ->layout('layouts.app', ['heading' => 'Flight Logs']);
     }
 }
