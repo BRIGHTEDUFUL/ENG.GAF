@@ -70,9 +70,14 @@
 </div>
 
 <div class="report">
-    {{-- Title --}}
-    <div class="report-title">AFHQ Daily Aircraft and Vehicle State</div>
-    <div class="report-sub">Air Force Base — Accra</div>
+    {{-- Header with Logo --}}
+    <div style="display:flex; align-items:center; justify-content:center; gap:20px; margin-bottom:10px;">
+        <img src="{{ asset('images/gaf-logo.png') }}" alt="GAF Logo" style="width:70px; height:70px; object-fit:contain;">
+        <div style="text-align:center;">
+            <div class="report-title" style="margin-bottom:0;">AFHQ Daily Aircraft and Vehicle State</div>
+            <div class="report-sub">Air Force Base — Accra</div>
+        </div>
+    </div>
     <div class="report-meta">
         <span>Report No: {{ \Carbon\Carbon::parse($date)->format('z') + 1 }}</span>
         <span>Date: {{ \Carbon\Carbon::parse($date)->format('d-M-Y') }}</span>

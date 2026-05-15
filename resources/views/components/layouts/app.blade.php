@@ -18,11 +18,11 @@
     {{-- Mobile backdrop --}}
     <div x-show="sidebarOpen && window.innerWidth < 1024"
          x-transition.opacity @click="sidebarOpen=false"
-         class="fixed inset-0 z-20 bg-gaf-navy/50 backdrop-blur-sm lg:hidden" style="display:none"></div>
+         class="fixed inset-0 z-20 bg-gaf-navy/50 backdrop-blur-sm lg:hidden print:hidden" style="display:none"></div>
 
     {{-- ═══ SIDEBAR ═══ --}}
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed inset-y-0 left-0 z-30 flex flex-col bg-gaf-gradient shadow-gaf-lg transition-transform duration-300 lg:static lg:translate-x-0"
+           class="fixed inset-y-0 left-0 z-30 flex flex-col bg-gaf-gradient shadow-gaf-lg transition-transform duration-300 lg:static lg:translate-x-0 print:hidden"
            :style="sidebarCollapsed ? 'width:72px' : 'width:260px'">
 
         <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10 shrink-0">
@@ -112,10 +112,10 @@
     </aside>
 
     {{-- ═══ MAIN ═══ --}}
-    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden print:overflow-visible">
 
         {{-- Top bar --}}
-        <header class="flex items-center gap-3 h-16 px-4 sm:px-6 bg-white border-b border-sky-100 shadow-sm shrink-0">
+        <header class="flex items-center gap-3 h-16 px-4 sm:px-6 bg-white border-b border-sky-100 shadow-sm shrink-0 print:hidden">
             <button @click="sidebarOpen=!sidebarOpen"
                     class="lg:hidden p-2 rounded-xl text-sky-600 hover:bg-sky-50 transition-colors">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
