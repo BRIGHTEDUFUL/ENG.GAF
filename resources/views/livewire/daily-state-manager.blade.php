@@ -8,23 +8,32 @@
     {{-- Header --}}
     <div class="relative overflow-hidden rounded-3xl bg-gaf-gradient p-6 mb-5 shadow-gaf">
         <div class="absolute inset-0 opacity-10 grid-bg"></div>
-        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div>
                 <span class="inline-block bg-white/10 text-sky-200 text-xs font-semibold px-3 py-1 rounded-full border border-white/20 mb-2">📋 AFHQ Ops</span>
                 <h1 class="text-2xl font-black text-white">Daily Aircraft State</h1>
-                <p class="text-sky-200 text-sm mt-1">AFHQ Daily Aircraft &amp; Vehicle State — {{ \Carbon\Carbon::parse($reportDate)->format('d M Y') }}</p>
+                <p class="text-sky-200 text-sm mt-1">
+                    AFHQ Daily Aircraft &amp; Vehicle State &mdash;
+                    <span class="font-bold text-white">{{ \Carbon\Carbon::parse($reportDate)->format('d M Y') }}</span>
+                    @if($reportDate === now()->format('Y-m-d'))
+                    <span class="ml-2 text-xs bg-green-400/20 text-green-200 px-2 py-0.5 rounded-full border border-green-300/30">Today</span>
+                    @else
+                    <span class="ml-2 text-xs bg-amber-400/20 text-amber-200 px-2 py-0.5 rounded-full border border-amber-300/30">Historical</span>
+                    @endif
+                </p>
             </div>
-            <div class="flex items-center gap-2 flex-wrap">
+            <div class="flex items-center gap-2 flex-wrap shrink-0">
                 <a href="{{ route('daily-state.report', ['date' => $reportDate]) }}" target="_blank"
                    class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
                     Print Report
                 </a>
-                <button wire:click="autoPopulate" wire:loading.attr="disabled"
+                <button wire:click="autoPopulate" wire:loading.attr="disabled" wire:target="autoPopulate"
                         class="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                    <span wire:loading.remove>Auto-Populate</span>
-                    <span wire:loading>Populating…</span>
+                    <svg class="w-4 h-4" wire:loading.remove wire:target="autoPopulate" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    <svg class="animate-spin w-4 h-4" wire:loading wire:target="autoPopulate" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                    <span wire:loading.remove wire:target="autoPopulate">Auto-Populate</span>
+                    <span wire:loading wire:target="autoPopulate">Populating&hellip;</span>
                 </button>
                 <button wire:click="openCreate" class="btn-gaf shrink-0">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -36,22 +45,65 @@
 
     {{-- Stats row --}}
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        @foreach([[$todayS,'Serviceable','bg-green-50 border-green-200 text-green-700','✅'],[$todayUS,'Unserviceable','bg-red-50 border-red-200 text-red-700','🔴'],[$todayGND,'Grounded','bg-gray-50 border-gray-200 text-gray-600','⛔'],[$critical,'Critical Defects','bg-orange-50 border-orange-200 text-orange-700','⚠']] as [$val,$lbl,$cls,$ico])
-        <div class="bg-white rounded-2xl border {{ explode(' ',$cls)[1] }} p-4 text-center animate-slide-up">
-            <p class="text-3xl font-black {{ explode(' ',$cls)[2] }}">{{ $val }}</p>
-            <p class="text-xs font-semibold text-gray-500 mt-1">{{ $ico }} {{ $lbl }}</p>
+        <div class="bg-white rounded-2xl border border-green-200 p-4 flex items-center gap-3 animate-slide-up shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-green-700">{{ $todayS }}</p>
+                <p class="text-xs font-semibold text-gray-500 leading-tight">Serviceable</p>
+            </div>
         </div>
-        @endforeach
+        <div class="bg-white rounded-2xl border border-red-200 p-4 flex items-center gap-3 animate-slide-up shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-red-600">{{ $todayUS }}</p>
+                <p class="text-xs font-semibold text-gray-500 leading-tight">Unserviceable</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-gray-200 p-4 flex items-center gap-3 animate-slide-up shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-gray-600">{{ $todayGND }}</p>
+                <p class="text-xs font-semibold text-gray-500 leading-tight">Grounded</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-orange-200 p-4 flex items-center gap-3 animate-slide-up shadow-sm">
+            <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div>
+                <p class="text-2xl font-black text-orange-600">{{ $critical }}</p>
+                <p class="text-xs font-semibold text-gray-500 leading-tight">Critical Defects</p>
+            </div>
+        </div>
     </div>
 
     {{-- Filters --}}
     <div class="gaf-card p-4 mb-4">
-        <div class="flex flex-col sm:flex-row gap-3">
-            <input wire:model.live="reportDate" type="date" class="gaf-input sm:w-48"/>
-            <select wire:model.live="wingFilter" class="gaf-input sm:w-56">
-                <option value="">All Wings</option>
-                @foreach($wings as $w)<option value="{{ $w->id }}">{{ $w->name }}</option>@endforeach
-            </select>
+        <div class="flex flex-col sm:flex-row gap-3 items-center">
+            <div class="flex items-center gap-2">
+                <svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <input wire:model.live="reportDate" type="date" class="gaf-input sm:w-44"/>
+            </div>
+            <div class="flex items-center gap-2 flex-1">
+                <svg class="w-4 h-4 text-sky-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"/></svg>
+                <select wire:model.live="wingFilter" class="gaf-input sm:w-56">
+                    <option value="">All Wings</option>
+                    @foreach($wings as $w)<option value="{{ $w->id }}">{{ $w->name }}</option>@endforeach
+                </select>
+            </div>
+            @if($reportDate !== now()->format('Y-m-d'))
+            <button wire:click="$set('reportDate', '{{ now()->format('Y-m-d') }}')"
+                    class="text-xs font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1 px-3 py-2 bg-sky-50 hover:bg-sky-100 rounded-xl border border-sky-200 transition-all shrink-0">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Back to Today
+            </button>
+            @endif
         </div>
     </div>
 
@@ -156,8 +208,11 @@
     <div class="modal-overlay" wire:click.self="$set('showModal',false)">
         <div class="relative z-50 w-full max-w-3xl bg-white rounded-3xl shadow-gaf-lg overflow-hidden animate-slide-up" @click.stop>
             <div class="modal-header">
-                <h2 class="text-base font-bold">{{ $editingStateId ? 'Edit Daily State Entry' : 'New Daily State Entry' }}</h2>
-                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white">
+                <div>
+                    <h2 class="text-base font-bold">{{ $editingStateId ? 'Edit Daily State Entry' : 'New Daily State Entry' }}</h2>
+                    <p class="text-xs text-sky-200 mt-0.5">{{ \Carbon\Carbon::parse($reportDate)->format('d M Y') }} &mdash; {{ $editingStateId ? 'Update aircraft serviceability record' : 'Record an aircraft state for today' }}</p>
+                </div>
+                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
@@ -281,7 +336,11 @@
             <div class="modal-footer">
                 <button wire:click="$set('showModal',false)" class="btn-gaf-outline">Cancel</button>
                 <button wire:click="save" wire:loading.attr="disabled" class="btn-gaf">
-                    <span wire:loading.remove>Save Entry</span><span wire:loading>Saving…</span>
+                    <span wire:loading.remove wire:target="save">{{ $editingStateId ? 'Update Entry' : 'Save Entry' }}</span>
+                    <span wire:loading wire:target="save" class="flex items-center gap-2">
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                        Saving&hellip;
+                    </span>
                 </button>
             </div>
         </div>
@@ -292,14 +351,17 @@
     @if($showDeleteConfirm)
     <div class="modal-overlay">
         <div class="relative z-50 w-full max-w-sm bg-white rounded-2xl shadow-gaf-lg border border-sky-100 p-6 text-center animate-slide-up">
-            <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
-                <svg class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <div class="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </div>
-            <h3 class="text-base font-bold text-gaf-navy mb-1">Delete Entry?</h3>
-            <p class="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+            <h3 class="text-base font-bold text-gaf-navy mb-1">Delete State Entry?</h3>
+            <p class="text-sm text-gray-500 mb-6">This aircraft's daily serviceability record and all linked defect notes will be permanently removed. This <strong>cannot be undone</strong>.</p>
             <div class="flex gap-3">
                 <button wire:click="$set('showDeleteConfirm',false)" class="btn-gaf-outline flex-1">Cancel</button>
-                <button wire:click="deleteState" class="btn-danger flex-1">Delete</button>
+                <button wire:click="deleteState" wire:loading.attr="disabled" class="btn-danger flex-1">
+                    <span wire:loading.remove wire:target="deleteState">Delete</span>
+                    <span wire:loading wire:target="deleteState">Deleting&hellip;</span>
+                </button>
             </div>
         </div>
     </div>
