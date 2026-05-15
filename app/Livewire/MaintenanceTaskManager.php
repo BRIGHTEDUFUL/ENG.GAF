@@ -74,7 +74,9 @@ class MaintenanceTaskManager extends Component
     {
         $this->validate([
             'title'       => 'required|string|max:200',
+            'description' => 'nullable|string',
             'aircraft_id' => 'required|exists:aircraft,id',
+            'assigned_to' => 'nullable|exists:users,id',
             'priority'    => 'required|in:low,medium,high,critical',
             'status'      => 'required|in:pending,in-progress,completed',
             'due_date'    => 'nullable|date',

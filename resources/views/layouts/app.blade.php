@@ -22,7 +22,7 @@
     {{-- Mobile backdrop --}}
     <div x-show="sidebarOpen && window.innerWidth < 1024"
          x-transition.opacity @click="sidebarOpen=false"
-         class="fixed inset-0 z-20 bg-gaf-navy/50 backdrop-blur-sm lg:hidden"
+         class="fixed inset-0 z-20 bg-gaf-navy/50 backdrop-blur-sm lg:hidden print:hidden"
          style="display:none"></div>
 
     {{-- ═══════════════════════════════════════════════════════════════
@@ -30,15 +30,13 @@
     ═══════════════════════════════════════════════════════════════ --}}
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
            class="fixed inset-y-0 left-0 z-30 flex flex-col bg-gaf-gradient shadow-gaf-lg
-                  transition-transform duration-300 lg:static lg:translate-x-0"
+                  transition-transform duration-300 lg:static lg:translate-x-0 print:hidden"
            :style="sidebarCollapsed ? 'width:72px' : 'width:260px'">
 
         {{-- Logo --}}
         <div class="flex items-center gap-3 px-5 py-5 border-b border-white/10 shrink-0">
-            <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-white/15 backdrop-blur-sm border border-white/20 shrink-0">
-                <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
+            <div class="flex items-center justify-center w-12 h-12 rounded-full bg-white shrink-0 p-1.5 shadow-sm">
+                <img src="{{ asset('images/gaf-logo.png') }}" alt="GAF Logo" class="w-full h-full object-contain">
             </div>
             <div class="min-w-0 overflow-hidden transition-all duration-300" x-show="!sidebarCollapsed">
                 <p class="text-white font-bold text-sm leading-tight">Ghana Air Force</p>
@@ -128,10 +126,10 @@
     {{-- ═══════════════════════════════════════════════════════════════
          MAIN CONTENT
     ═══════════════════════════════════════════════════════════════ --}}
-    <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
+    <div class="flex flex-col flex-1 min-w-0 overflow-hidden print:overflow-visible">
 
         {{-- Top bar --}}
-        <header class="flex items-center gap-3 h-16 px-4 sm:px-6 bg-white border-b border-sky-100 shadow-sm shrink-0">
+        <header class="flex items-center gap-3 h-16 px-4 sm:px-6 bg-white border-b border-sky-100 shadow-sm shrink-0 print:hidden">
             <button @click="sidebarOpen=!sidebarOpen" class="lg:hidden p-2 rounded-xl text-sky-600 hover:bg-sky-50 transition-colors">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>

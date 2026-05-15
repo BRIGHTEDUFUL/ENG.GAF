@@ -231,18 +231,25 @@ class DailyStateManager extends Component
     {
         $this->validate([
             'form.aircraft_id'      => 'required|exists:aircraft,id',
+            'form.wing_id'          => 'nullable|exists:wings,id',
             'form.state'            => 'required|in:S,U/S,grounded',
             'form.daily_flight_hrs' => 'nullable|numeric|min:0|max:99',
             'form.total_flight_hrs' => 'nullable|numeric|min:0',
             'form.daily_landings'   => 'nullable|integer|min:0',
             'form.total_landings'   => 'nullable|integer|min:0',
+            'form.notes'            => 'nullable|string|max:1000',
             'defects.*.description' => 'nullable|string|max:1000',
             'remarks.*.description' => 'nullable|string|max:500',
             'remarks.*.due_hours'   => 'nullable|numeric|min:0',
         ]);
 
         DB::transaction(function () {
-            $data = array_merge($this->form, [
+            // Clean empty strings to null for database
+            $cleanForm = array_map(function($val) {
+                return $val === '' ? null : $val;
+            }, $this->form);
+
+            $data = array_merge($cleanForm, [
                 'report_date' => $this->reportDate,
                 'created_by'  => auth()->id(),
             ]);

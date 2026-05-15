@@ -51,7 +51,10 @@ class IncidentForm extends Form
     {
         $this->validate();
         
-        $incident = Incident::create($this->all() + ['reported_by' => auth()->id()]);
+        $data = $this->except('incident');
+        $data['reported_by'] = auth()->id();
+        
+        $incident = Incident::create($data);
         
         $this->handleAircraftStatus($incident);
         
@@ -71,7 +74,7 @@ class IncidentForm extends Form
     {
         $this->validate();
         
-        $data = $this->all();
+        $data = $this->except('incident');
         if (in_array($this->status, ['resolved', 'closed']) && !$this->incident->resolved_at) {
             $data['resolved_at'] = now();
         } elseif (in_array($this->status, ['open', 'under-investigation'])) {

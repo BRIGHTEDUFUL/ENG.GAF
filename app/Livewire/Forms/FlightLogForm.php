@@ -66,7 +66,10 @@ class FlightLogForm extends Form
         
         $duration = Carbon::parse($this->departure_time)->diffInMinutes(Carbon::parse($this->arrival_time));
         
-        $log = FlightLog::create($this->all() + ['flight_duration_minutes' => $duration]);
+        $data = $this->except('log');
+        $data['flight_duration_minutes'] = $duration;
+        
+        $log = FlightLog::create($data);
         
         // Auto-update Aircraft Hours
         if ($log->aircraft) {
@@ -85,7 +88,10 @@ class FlightLogForm extends Form
         $oldDuration = $this->log->flight_duration_minutes;
         $newDuration = Carbon::parse($this->departure_time)->diffInMinutes(Carbon::parse($this->arrival_time));
         
-        $this->log->update($this->all() + ['flight_duration_minutes' => $newDuration]);
+        $data = $this->except('log');
+        $data['flight_duration_minutes'] = $newDuration;
+        
+        $this->log->update($data);
 
         // Auto-update Aircraft Hours (apply the difference)
         if ($this->log->aircraft) {

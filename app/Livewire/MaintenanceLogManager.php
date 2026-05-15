@@ -70,11 +70,13 @@ class MaintenanceLogManager extends Component
     public function save(): void
     {
         $this->validate([
-            'aircraft_id'    => 'required|exists:aircraft,id',
-            'work_performed' => 'required|string',
-            'hours_spent'    => 'required|numeric|min:0.01',
-            'log_date'       => 'required|date',
-            'status'         => 'required|in:draft,submitted,approved',
+            'aircraft_id'         => 'required|exists:aircraft,id',
+            'maintenance_task_id' => 'nullable|exists:maintenance_tasks,id',
+            'work_performed'      => 'required|string',
+            'parts_used'          => 'nullable|string',
+            'hours_spent'         => 'required|numeric|min:0.01',
+            'log_date'            => 'required|date',
+            'status'              => 'required|in:draft,submitted,approved',
         ]);
 
         $data = [
