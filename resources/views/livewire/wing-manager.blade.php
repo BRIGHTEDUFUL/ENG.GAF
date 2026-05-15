@@ -96,55 +96,86 @@
     <div class="modal-overlay" wire:click.self="$set('showModal',false)">
         <div class="modal-panel" @click.stop>
             <div class="modal-header">
-                <h2 class="text-base font-bold">{{ $editingId ? 'Edit Wing' : 'New Wing' }}</h2>
-                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white">
+                <div>
+                    <h2 class="text-base font-bold">{{ $editingId ? 'Edit Wing' : 'Establish New Wing' }}</h2>
+                    <p class="text-xs text-sky-200 mt-0.5">{{ $editingId ? 'Update wing details and command structure' : 'Register a new operational wing in the command hierarchy' }}</p>
+                </div>
+                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Wing Name *</label>
-                        <input wire:model="form.name" type="text" class="gaf-input" placeholder="1st Fighter Wing"/>
-                        @error('form.name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+            <div class="modal-body space-y-5">
+
+                {{-- Section: Identity --}}
+                <fieldset>
+                    <legend class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span class="inline-block w-4 h-px bg-sky-300"></span> Wing Identity
+                    </legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Wing Name <span class="text-red-400">*</span></label>
+                            <input wire:model="form.name" type="text" class="gaf-input" placeholder="e.g. 1st Fighter Wing"/>
+                            @error('form.name')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Code <span class="text-red-400">*</span></label>
+                            <input wire:model="form.code" type="text" class="gaf-input font-mono uppercase" placeholder="1FW"/>
+                            @error('form.code')<p class="mt-1 text-xs text-red-500">⚠ {{ $message }}</p>@enderror
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Base Location <span class="text-red-400">*</span></label>
+                            <input wire:model="form.base_location" type="text" class="gaf-input" placeholder="e.g. Accra Air Base, Takoradi"/>
+                            @error('form.base_location')<p class="mt-1 text-xs text-red-500">⚠ {{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status <span class="text-red-400">*</span></label>
+                            <select wire:model="form.status" class="gaf-input">
+                                <option value="active">✅  Active</option>
+                                <option value="inactive">⚫  Inactive</option>
+                            </select>
+                            @error('form.status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Code *</label>
-                        <input wire:model="form.code" type="text" class="gaf-input" placeholder="1FW"/>
-                        @error('form.code')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </fieldset>
+
+                {{-- Section: Command Structure --}}
+                <fieldset>
+                    <legend class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span class="inline-block w-4 h-px bg-sky-300"></span> Command Structure
+                    </legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Wing Commander</label>
+                            <select wire:model="form.commander_id" class="gaf-input">
+                                <option value="">— Unassigned —</option>
+                                @foreach($commanders as $c)<option value="{{ $c->id }}">{{ $c->rank ? $c->rank.' ' : '' }}{{ $c->name }}</option>@endforeach
+                            </select>
+                            @error('form.commander_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Established Date</label>
+                            <input wire:model="form.established_date" type="date" class="gaf-input"/>
+                            @error('form.established_date')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                </div>
+                </fieldset>
+
+                {{-- Description --}}
                 <div>
-                    <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Base Location *</label>
-                    <input wire:model="form.base_location" type="text" class="gaf-input" placeholder="Accra Air Base"/>
-                    @error('form.base_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    <label class="block text-xs font-semibold text-gray-600 mb-1.5">Description / Mission Brief</label>
+                    <textarea wire:model="form.description" rows="3" class="gaf-input resize-none" placeholder="Wing mission, capabilities, and operational scope…"></textarea>
+                    @error('form.description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Commander</label>
-                        <select wire:model="form.commander_id" class="gaf-input">
-                            <option value="">— None —</option>
-                            @foreach($commanders as $c)<option value="{{ $c->id }}">{{ $c->name }}</option>@endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Status</label>
-                        <select wire:model="form.status" class="gaf-input">
-                            <option value="active">Active</option>
-                            <option value="inactive">Inactive</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Description</label>
-                    <textarea wire:model="form.description" rows="2" class="gaf-input resize-none" placeholder="Wing description…"></textarea>
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button wire:click="$set('showModal',false)" class="btn-gaf-outline">Cancel</button>
                 <button wire:click="save" wire:loading.attr="disabled" class="btn-gaf">
-                    <span wire:loading.remove>Save Wing</span>
-                    <span wire:loading>Saving…</span>
+                    <span wire:loading.remove wire:target="save">{{ $editingId ? 'Update Wing' : 'Establish Wing' }}</span>
+                    <span wire:loading wire:target="save" class="flex items-center gap-2">
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                        Saving…
+                    </span>
                 </button>
             </div>
         </div>

@@ -128,65 +128,108 @@
     <div class="modal-overlay" wire:click.self="$set('showModal',false)">
         <div class="modal-panel" @click.stop>
             <div class="modal-header">
-                <h2 class="text-base font-bold">{{ $editingId ? 'Edit Incident' : 'Report Incident' }}</h2>
-                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+                <div>
+                    <h2 class="text-base font-bold">{{ $editingId ? 'Edit Incident' : 'Report Incident' }}</h2>
+                    <p class="text-xs text-sky-200 mt-0.5">{{ $editingId ? 'Update incident details and status' : 'Document a new operational incident for investigation' }}</p>
+                </div>
+                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
             </div>
-            <div class="modal-body">
-                <div>
-                    <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Title *</label>
-                    <input wire:model="title" type="text" class="gaf-input" placeholder="Brief incident description"/>
-                    @error('title')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Description</label>
-                    <textarea wire:model="description" rows="3" class="gaf-input resize-none"></textarea>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Aircraft</label>
-                        <select wire:model="aircraft_id" class="gaf-input">
-                            <option value="">— None —</option>
-                            @foreach($aircraft as $ac)<option value="{{ $ac->id }}">{{ $ac->tail_number }}</option>@endforeach
-                        </select>
+            <div class="modal-body space-y-5">
+
+                {{-- Section: Core Details --}}
+                <fieldset>
+                    <legend class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span class="inline-block w-4 h-px bg-sky-300"></span> Incident Details
+                    </legend>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Incident Title <span class="text-red-400">*</span></label>
+                            <input wire:model="title" type="text" class="gaf-input" placeholder="Brief, descriptive title of what occurred"/>
+                            @error('title')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Description</label>
+                            <textarea wire:model="description" rows="3" class="gaf-input resize-none" placeholder="Detailed account of the incident — what happened, when, how it was discovered…"></textarea>
+                            @error('description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Incident Date *</label>
-                        <input wire:model="incident_date" type="date" class="gaf-input"/>
-                        @error('incident_date')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                </fieldset>
+
+                {{-- Section: Classification --}}
+                <fieldset>
+                    <legend class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span class="inline-block w-4 h-px bg-sky-300"></span> Classification & Timing
+                    </legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Severity <span class="text-red-400">*</span></label>
+                            <select wire:model="severity" class="gaf-input">
+                                <option value="low">🟢  Low</option>
+                                <option value="medium">🟡  Medium</option>
+                                <option value="high">🟠  High</option>
+                                <option value="critical">🔴  Critical</option>
+                            </select>
+                            @error('severity')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status <span class="text-red-400">*</span></label>
+                            <select wire:model="status" class="gaf-input">
+                                <option value="open">🔴  Open</option>
+                                <option value="under-investigation">🔵  Under Investigation</option>
+                                <option value="resolved">🟢  Resolved</option>
+                                <option value="closed">⚫  Closed</option>
+                            </select>
+                            @error('status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Incident Date <span class="text-red-400">*</span></label>
+                            <input wire:model="incident_date" type="date" class="gaf-input"/>
+                            @error('incident_date')<p class="mt-1 text-xs text-red-500">⚠ {{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Location</label>
+                            <input wire:model="location" type="text" class="gaf-input" placeholder="e.g. Hangar 3, Runway 09L"/>
+                            @error('location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Severity *</label>
-                        <select wire:model="severity" class="gaf-input">
-                            <option value="low">Low</option><option value="medium">Medium</option>
-                            <option value="high">High</option><option value="critical">Critical</option>
-                        </select>
+                </fieldset>
+
+                {{-- Section: Assignment --}}
+                <fieldset>
+                    <legend class="text-[10px] font-bold text-sky-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <span class="inline-block w-4 h-px bg-sky-300"></span> Aircraft & Personnel
+                    </legend>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Aircraft Involved</label>
+                            <select wire:model="aircraft_id" class="gaf-input">
+                                <option value="">— None / Unknown —</option>
+                                @foreach($aircraft as $ac)<option value="{{ $ac->id }}">{{ $ac->tail_number }} — {{ $ac->model }}</option>@endforeach
+                            </select>
+                            @error('aircraft_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Assigned Investigator</label>
+                            <select wire:model="investigator_id" class="gaf-input">
+                                <option value="">— Unassigned —</option>
+                                @foreach($personnel as $p)<option value="{{ $p->id }}">{{ $p->rank ? $p->rank.' ' : '' }}{{ $p->name }}</option>@endforeach
+                            </select>
+                            @error('investigator_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Status</label>
-                        <select wire:model="status" class="gaf-input">
-                            <option value="open">Open</option>
-                            <option value="under-investigation">Under Investigation</option>
-                            <option value="resolved">Resolved</option>
-                            <option value="closed">Closed</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Investigator</label>
-                        <select wire:model="investigator_id" class="gaf-input">
-                            <option value="">— None —</option>
-                            @foreach($personnel as $p)<option value="{{ $p->id }}">{{ $p->name }}</option>@endforeach
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Location</label>
-                        <input wire:model="location" type="text" class="gaf-input"/>
-                    </div>
-                </div>
+                </fieldset>
+
             </div>
             <div class="modal-footer">
                 <button wire:click="$set('showModal',false)" class="btn-gaf-outline">Cancel</button>
                 <button wire:click="save" wire:loading.attr="disabled" class="btn-gaf">
-                    <span wire:loading.remove>Save Incident</span><span wire:loading>Saving…</span>
+                    <span wire:loading.remove wire:target="save">{{ $editingId ? 'Update Incident' : 'Report Incident' }}</span>
+                    <span wire:loading wire:target="save" class="flex items-center gap-2">
+                        <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+                        Saving…
+                    </span>
                 </button>
             </div>
         </div>
@@ -195,14 +238,18 @@
     @if($showDeleteConfirm)
     <div class="modal-overlay">
         <div class="relative z-50 w-full max-w-sm bg-white rounded-2xl shadow-gaf-lg border border-sky-100 overflow-hidden animate-slide-up p-6 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></div>
+            <div class="w-14 h-14 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-7 h-7 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></div>
             <h3 class="text-base font-bold text-gaf-navy mb-1">Delete Incident?</h3>
-            <p class="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+            <p class="text-sm text-gray-500 mb-6">The incident record and all investigation notes will be permanently removed. This <strong>cannot be undone</strong>.</p>
             <div class="flex gap-3">
                 <button wire:click="$set('showDeleteConfirm',false)" class="btn-gaf-outline flex-1">Cancel</button>
-                <button wire:click="deleteIncident" class="btn-danger flex-1">Delete</button>
+                <button wire:click="deleteIncident" wire:loading.attr="disabled" class="btn-danger flex-1">
+                    <span wire:loading.remove wire:target="deleteIncident">Delete</span>
+                    <span wire:loading wire:target="deleteIncident">Deleting…</span>
+                </button>
             </div>
         </div>
     </div>
     @endif
 </div>
+
