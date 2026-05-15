@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── CSS Custom Properties ──────────────────────────────────── */
+:root {
+  --gaf-blue:    #0B4FA3;
+  --gaf-sky:     #0EA5E9;
+  --gaf-navy:    #0C2D6B;
+  --gaf-gold:    #F59E0B;
+  --gaf-accent:  #06B6D4;
+  --gaf-light:   #E0F2FE;
+  --gaf-bg:      #F0F7FF;
+}
+
+/* ─── Base ───────────────────────────────────────────────────── */
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--gaf-bg); }
+  * { box-sizing: border-box; }
+  ::selection { background: var(--gaf-sky); color: white; }
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: #EFF6FF; }
+  ::-webkit-scrollbar-thumb { background: #BAE6FD; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gaf-sky); }
+}
+
+/* ─── Components ─────────────────────────────────────────────── */
+@layer components {
+
+  /* --- Glassmorphism card --- */
+  .gaf-glass {
+    @apply bg-white/80 backdrop-blur-sm border border-sky-100 shadow-card;
+  }
+
+  /* --- GAF gradient button --- */
+  .btn-gaf {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+           font-semibold text-sm text-white transition-all duration-200
+           bg-gradient-to-r from-gaf-blue to-gaf-sky
+           hover:from-gaf-navy hover:to-gaf-blue
+           hover:shadow-gaf active:scale-95 focus:outline-none focus:ring-2
+           focus:ring-sky-400 focus:ring-offset-2;
+  }
+
+  .btn-gaf-outline {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+           font-semibold text-sm border-2 border-gaf-blue text-gaf-blue bg-white
+           hover:bg-gaf-blue hover:text-white transition-all duration-200
+           hover:shadow-gaf active:scale-95 focus:outline-none focus:ring-2
+           focus:ring-sky-400 focus:ring-offset-2;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
+           font-semibold text-sm text-white bg-red-500
+           hover:bg-red-600 transition-all duration-200 active:scale-95;
+  }
+
+  /* --- Nav link active state --- */
+  .nav-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
+           transition-all duration-200 text-sky-700 hover:bg-sky-50 hover:text-gaf-blue;
+  }
+  .nav-link.active {
+    @apply bg-gradient-to-r from-gaf-blue to-gaf-sky text-white shadow-gaf;
+  }
+
+  /* --- GAF Input --- */
+  .gaf-input {
+    @apply w-full bg-white border border-sky-200 rounded-xl px-4 py-2.5 text-sm
+           text-gray-800 placeholder-gray-400 transition-all duration-200
+           focus:border-gaf-sky focus:ring-2 focus:ring-sky-200 focus:outline-none;
+  }
+
+  /* --- GAF Card --- */
+  .gaf-card {
+    @apply bg-white rounded-2xl border border-sky-100 shadow-card overflow-hidden
+           transition-all duration-300 hover:shadow-gaf hover:-translate-y-0.5;
+  }
+
+  /* --- Stat card --- */
+  .stat-card {
+    @apply gaf-card p-5 flex flex-col gap-3;
+  }
+
+  /* --- Badge --- */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  }
+
+  /* --- Table row hover --- */
+  .trow {
+    @apply border-b border-sky-50 hover:bg-sky-50/60 transition-colors duration-150;
+  }
+
+  /* --- Section header --- */
+  .section-header {
+    @apply flex items-center justify-between mb-6;
+  }
+
+  /* --- Page heading --- */
+  .page-heading { @apply text-xl font-bold text-gaf-navy; }
+  .page-sub     { @apply text-sm text-sky-600 mt-0.5; }
+
+  /* --- Modal overlay --- */
+  .modal-overlay {
+    @apply fixed inset-0 z-40 flex items-center justify-center p-4
+           bg-gaf-navy/50 backdrop-blur-sm;
+  }
+  .modal-panel {
+    @apply relative z-50 w-full max-w-2xl bg-white rounded-2xl shadow-gaf-lg
+           border border-sky-100 overflow-hidden animate-slide-up;
+  }
+  .modal-header {
+    @apply flex items-center justify-between px-6 py-4 bg-gaf-gradient text-white;
+  }
+  .modal-body { @apply px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto; }
+  .modal-footer {
+    @apply flex justify-end gap-3 px-6 py-4 border-t border-sky-100 bg-sky-50/50;
+  }
+
+  /* --- Shimmer loading --- */
+  .shimmer-line {
+    @apply h-4 rounded bg-sky-100 animate-pulse;
+  }
+
+  /* --- Hero wave animation --- */
+  .wave-bg::before {
+    content: '';
+    @apply absolute inset-0 opacity-20;
+    background: radial-gradient(circle at 20% 50%, #0EA5E9 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, #0B4FA3 0%, transparent 50%),
+                radial-gradient(circle at 60% 80%, #06B6D4 0%, transparent 50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+}
+
+/* ─── Utilities ──────────────────────────────────────────────── */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(135deg, #0B4FA3, #0EA5E9);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-gaf-gradient {
+    background: linear-gradient(135deg, #0C2D6B 0%, #0B4FA3 45%, #0EA5E9 100%);
+  }
+
+  .border-gaf { @apply border-gaf-blue; }
+
+  .transition-bounce {
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+/* ─── Livewire page transitions ──────────────────────────────── */
+[wire\:loading] { opacity: 0.6; }
+[wire\:loading\.class] { }
+
+/* ─── Alpine.js transitions ──────────────────────────────────── */
+[x-cloak] { display: none !important; }
+
+/* ─── Print styles ───────────────────────────────────────────── */
+@media print {
+  body { background: white !important; }
+  nav, aside, header, .no-print { display: none !important; }
+  .print-full { width: 100% !important; }
+}

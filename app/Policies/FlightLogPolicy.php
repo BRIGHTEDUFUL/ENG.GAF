@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\FlightLog;
+use App\Models\User;
+
+class FlightLogPolicy
+{
+    public function viewAny(User $user): bool { return true; }
+    public function view(User $user, FlightLog $log): bool { return true; }
+
+    public function create(User $user): bool
+    {
+        return $user->hasRole(['admin', 'commander']);
+    }
+
+    public function update(User $user, FlightLog $log): bool
+    {
+        return $user->hasRole(['admin', 'commander']);
+    }
+
+    public function delete(User $user, FlightLog $log): bool
+    {
+        return $user->isAdmin();
+    }
+}

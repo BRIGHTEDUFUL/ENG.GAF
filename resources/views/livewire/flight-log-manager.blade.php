@@ -1,0 +1,165 @@
+<div x-data="{toast:{show:false,type:'success',msg:''},showToast(t,m){this.toast={show:true,type:t,msg:m};setTimeout(()=>this.toast.show=false,3500)}}"
+     x-on:notify.window="showToast($event.detail.type,$event.detail.message)" class="animate-fade-in">
+    <div x-show="toast.show" x-transition.opacity :class="toast.type==='success'?'bg-green-500':'bg-red-500'"
+         class="fixed bottom-5 right-5 z-50 flex items-center gap-2 rounded-2xl px-5 py-3 text-white shadow-gaf text-sm font-semibold" style="display:none">
+        <span x-text="toast.msg"></span></div>
+    <div class="relative overflow-hidden rounded-3xl bg-gaf-gradient p-6 mb-6 shadow-gaf">
+        <div class="absolute inset-0 opacity-10 grid-bg"></div>
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <span class="inline-block bg-white/10 text-sky-200 text-xs font-semibold px-3 py-1 rounded-full border border-white/20 mb-2">🗺 Flight Operations</span>
+                <h1 class="text-2xl font-black text-white">Flight Logs</h1>
+                <p class="text-sky-200 text-sm mt-1">Mission records, pilot logs, and sortie data</p>
+            </div>
+            @can('create', App\Models\FlightLog::class)
+            <button wire:click="openCreate" class="btn-gaf shrink-0">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Log Flight
+            </button>
+            @endcan
+        </div>
+    </div>
+    <div class="gaf-card p-4 mb-4">
+        <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search aircraft or pilot…" class="gaf-input pl-10"/>
+            </div>
+            <input wire:model.live="dateFilter" type="date" class="gaf-input sm:w-44"/>
+            <select wire:model.live="missionFilter" class="gaf-input sm:w-44">
+                <option value="">All Missions</option>
+                <option value="training">Training</option>
+                <option value="patrol">Patrol</option>
+                <option value="combat">Combat</option>
+                <option value="transport">Transport</option>
+                <option value="reconnaissance">Reconnaissance</option>
+            </select>
+        </div>
+    </div>
+    <div class="gaf-card overflow-hidden">
+        @if($flightLogs->isEmpty())
+        <div class="py-16 text-center"><svg class="w-12 h-12 text-sky-200 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+            <p class="text-gray-400 text-sm">No flight logs found</p></div>
+        @else
+        <div class="overflow-x-auto">
+            <table class="min-w-full">
+                <thead>
+                    <tr class="bg-gradient-to-r from-gaf-navy to-gaf-blue">
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Aircraft</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider hidden md:table-cell">Pilot</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Mission</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider hidden lg:table-cell">Route</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider hidden lg:table-cell">Departure</th>
+                        <th class="px-5 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Duration</th>
+                        <th class="px-5 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-sky-50">
+                    @foreach($flightLogs as $fl)
+                    <tr wire:key="fl-{{ $fl->id }}" class="trow">
+                        <td class="px-5 py-3 text-sm font-bold text-gaf-navy">{{ $fl->aircraft?->tail_number ?? '—' }}</td>
+                        <td class="px-5 py-3 text-sm text-gray-700 hidden md:table-cell">{{ $fl->pilot?->name ?? '—' }}</td>
+                        <td class="px-5 py-3"><span class="badge bg-purple-100 text-purple-700">{{ ucfirst($fl->mission_type ?? '—') }}</span></td>
+                        <td class="px-5 py-3 text-xs text-gray-500 hidden lg:table-cell">{{ $fl->departure_location ?? '—' }} → {{ $fl->arrival_location ?? '—' }}</td>
+                        <td class="px-5 py-3 text-sm text-gray-500 hidden lg:table-cell whitespace-nowrap">{{ $fl->departure_time?->format('d M H:i') ?? '—' }}</td>
+                        <td class="px-5 py-3 text-sm font-semibold text-gaf-blue">{{ $fl->flight_duration_minutes ? round($fl->flight_duration_minutes/60,1).'h' : '—' }}</td>
+                        <td class="px-5 py-3 text-right whitespace-nowrap">
+                            @can('update', $fl)
+                            <button wire:click="openEdit({{ $fl->id }})" class="text-gaf-blue hover:text-gaf-navy text-xs font-semibold mr-3 transition-colors">Edit</button>
+                            @endcan
+                            @can('delete', $fl)
+                            <button wire:click="confirmDelete({{ $fl->id }})" class="text-red-500 hover:text-red-700 text-xs font-semibold transition-colors">Delete</button>
+                            @endcan
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+        <div class="px-5 py-3 border-t border-sky-50 bg-sky-50/50">{{ $flightLogs->links() }}</div>
+        @endif
+    </div>
+    @if($showModal)
+    <div class="modal-overlay" wire:click.self="$set('showModal',false)">
+        <div class="modal-panel" @click.stop>
+            <div class="modal-header">
+                <h2 class="text-base font-bold">{{ $editingId ? 'Edit Flight Log' : 'Log New Flight' }}</h2>
+                <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
+            </div>
+            <div class="modal-body">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Aircraft *</label>
+                        <select wire:model="aircraft_id" class="gaf-input">
+                            <option value="">— Select —</option>
+                            @foreach($aircraft as $ac)<option value="{{ $ac->id }}">{{ $ac->tail_number }}</option>@endforeach
+                        </select>
+                        @error('aircraft_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Pilot *</label>
+                        <select wire:model="pilot_id" class="gaf-input">
+                            <option value="">— Select —</option>
+                            @foreach($pilots as $p)<option value="{{ $p->id }}">{{ $p->name }}</option>@endforeach
+                        </select>
+                        @error('pilot_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Mission Type</label>
+                        <select wire:model="mission_type" class="gaf-input">
+                            <option value="training">Training</option>
+                            <option value="patrol">Patrol</option>
+                            <option value="combat">Combat</option>
+                            <option value="transport">Transport</option>
+                            <option value="reconnaissance">Reconnaissance</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Departure</label>
+                        <input wire:model="departure_time" type="datetime-local" class="gaf-input"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Arrival</label>
+                        <input wire:model="arrival_time" type="datetime-local" class="gaf-input"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Duration (mins)</label>
+                        <input wire:model="flight_duration_minutes" type="number" class="gaf-input"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Departure Location</label>
+                        <input wire:model="departure_location" type="text" class="gaf-input"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Arrival Location</label>
+                        <input wire:model="arrival_location" type="text" class="gaf-input"/>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Notes</label>
+                    <textarea wire:model="notes" rows="2" class="gaf-input resize-none"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button wire:click="$set('showModal',false)" class="btn-gaf-outline">Cancel</button>
+                <button wire:click="save" wire:loading.attr="disabled" class="btn-gaf">
+                    <span wire:loading.remove>Save Flight</span><span wire:loading>Saving…</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+    @if($showDeleteConfirm)
+    <div class="modal-overlay">
+        <div class="relative z-50 w-full max-w-sm bg-white rounded-2xl shadow-gaf-lg border border-sky-100 overflow-hidden animate-slide-up p-6 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center mx-auto mb-4"><svg class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg></div>
+            <h3 class="text-base font-bold text-gaf-navy mb-1">Delete Flight Log?</h3>
+            <p class="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
+            <div class="flex gap-3">
+                <button wire:click="$set('showDeleteConfirm',false)" class="btn-gaf-outline flex-1">Cancel</button>
+                <button wire:click="deleteLog" class="btn-danger flex-1">Delete</button>
+            </div>
+        </div>
+    </div>
+    @endif
+</div>
