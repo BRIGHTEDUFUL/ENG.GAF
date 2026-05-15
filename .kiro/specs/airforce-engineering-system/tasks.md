@@ -43,7 +43,7 @@ Complete rebuild of the existing personnel management app into a 12-module milit
   - [x] 4.8 Create ReportPolicy (admin/commander/auditor read)
   - [x] 4.9 Register all policies in AppServiceProvider
 
-- [ ] 5. Wings module
+- [x] 5. Wings module
   - [x] 5.1 Create WingForm Livewire Form Object with validation rules
   - [x] 5.2 Create WingManager Livewire component (list, create, edit, delete)
   - [x] 5.3 Create wing-manager.blade.php with dark navy UI, data table, modal
