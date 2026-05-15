@@ -1,58 +1,91 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
+  <img src="public/images/gaf-logo.png" alt="GAF Logo" width="150"/>
+  <h1>Ghana Air Force Engineering Command System</h1>
+  <p><strong>Military-Grade Aircraft Maintenance, Engineering & Operational Management Platform</strong></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+  <p>
+    <img src="https://img.shields.io/badge/Framework-Laravel_11-FF2D20.svg?style=flat-square&logo=laravel" alt="Laravel">
+    <img src="https://img.shields.io/badge/Frontend-Livewire_3-4E56A6.svg?style=flat-square&logo=livewire" alt="Livewire">
+    <img src="https://img.shields.io/badge/Styling-Tailwind_CSS-38B2AC.svg?style=flat-square&logo=tailwind-css" alt="Tailwind">
+    <img src="https://img.shields.io/badge/Database-MySQL-4479A1.svg?style=flat-square&logo=mysql" alt="MySQL">
+    <img src="https://img.shields.io/badge/Status-Classified-red.svg?style=flat-square" alt="Classified">
+  </p>
+</div>
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🦅 Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The **Ghana Air Force Engineering Command System (GAF-ECS)** is a centralized, real-time command platform designed to digitize and streamline the engineering and maintenance workflows of the Ghana Air Force. 
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+It replaces legacy physical logbooks with an interconnected, highly secure digital ecosystem. The platform enforces strict Role-Based Access Control (RBAC), automatically monitors aircraft flight hours for preventative maintenance, and provides commanding officers with real-time fleet readiness metrics.
 
-## Learning Laravel
+## 🚀 Core Capabilities
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Digital Twin Aircraft Profiles (360° View):** Instantly access the entire lifecycle, timeline, and health metrics of any airframe in the fleet.
+- **Smart Flight & Maintenance Logging:** Automatic total flight hour calculation. The system autonomously triggers 100-hour phase inspection warnings.
+- **Task-to-Log Pipeline:** Engineers can close out Scheduled Maintenance Tasks, instantly generating an audited draft log of the physical work performed.
+- **Smart Status Interlocks:** If a pilot or engineer reports a `Critical` or `High` severity incident, the system autonomously grounds the aircraft.
+- **Real-Time Command Broadcasts:** Live database notifications push instantly to Commanders and Supervisors upon the logging of high-priority defects.
+- **Fleet Audit Data Exports:** Generate physical A4 Daily State Reports and stream CSV grids of any live table for morning briefings.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🏗️ Technical Architecture
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+- **Backend Logic:** Laravel 11.x
+- **Dynamic Frontend:** Laravel Livewire v3 + Alpine.js
+- **Styling UI:** Tailwind CSS (Custom Military-Grade `gaf-navy`, `gaf-blue` aesthetic)
+- **Database:** MySQL / MariaDB
 
-## Agentic Development
+## 🔐 Role-Based Access Control (RBAC)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+The system enforces strict UI and backend authorization policies. Destructive actions (like deleting aircraft or altering verified flight logs) are completely hidden from non-commissioned or unauthorized personnel.
 
-```bash
-composer require laravel/boost --dev
+* **Commander:** Full audit visibility, fleet reporting, and override authority.
+* **Supervisor:** Task assignment, log verification, and daily state generation.
+* **Engineer:** Task execution, flight/maintenance logging.
+* **Auditor:** Read-only access to historical logs and data exports.
 
-php artisan boost:install
-```
+## 🛠️ Local Installation & Setup
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/BRIGHTEDUFUL/ENG.GAF.git
+   cd airforce-system
+   ```
 
-## Contributing
+2. **Install Composer dependencies:**
+   ```bash
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Install NPM dependencies:**
+   ```bash
+   npm install
+   npm run build
+   ```
 
-## Code of Conduct
+4. **Environment Setup:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
+   *Configure your `.env` file with the correct database credentials.*
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. **Run Migrations & Seeders:**
+   ```bash
+   php artisan migrate --seed
+   ```
 
-## Security Vulnerabilities
+6. **Serve the Application:**
+   ```bash
+   php artisan serve
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## ⚠️ Security Notice
 
-## License
+This repository contains operational intelligence system architecture. Unauthorized access, distribution, or duplication of this framework outside of authorized military deployment is strictly prohibited. 
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+<div align="center">
+  <p>🇬🇭 <i>Vires De Caelo</i> (Strength From The Skies)</p>
+</div>
