@@ -26,6 +26,27 @@ class WingManager extends Component
 
     public function updatedSearch(): void { $this->resetPage(); }
 
+    public function exportCsv()
+    {
+        $this->authorize('viewAny', Wing::class);
+
+        $wings = Wing::with('commander')
+            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%")
+                ->orWhere('code', 'like', "%{$this->search}%")
+                ->orWhere('base_location', 'like', "%{$this->search}%"))
+            ->withCount(['aircraft', 'personnel'])
+            ->get();
+
+        $csvData = "ID,Name,Code,Base Location,Commander,Aircraft Count,Status\n";
+        foreach ($wings as $wing) {
+            $csvData .= "{$wing->id},\"" . str_replace('"', '""', $wing->name) . "\",{$wing->code},\"" . str_replace('"', '""', $wing->base_location) . "\",{$wing->commander?->name},{$wing->aircraft_count},{$wing->status}\n";
+        }
+
+        return response()->streamDownload(function () use ($csvData) {
+            echo $csvData;
+        }, 'wings_export_' . date('Y-m-d') . '.csv');
+    }
+
     public function openCreate(): void
     {
         try {

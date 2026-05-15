@@ -39,8 +39,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/wings', WingManager::class)->name('wings.index');
     });
 
-    // Fleet Management — admin, commander, auditor
-    Route::middleware('role:admin,commander,auditor')->group(function () {
+    // Fleet Management — admin, commander, supervisor, auditor
+    Route::middleware('role:admin,commander,supervisor,auditor')->group(function () {
         Route::get('/aircraft', AircraftManager::class)->name('aircraft.index');
         Route::get('/aircraft/{id}', AircraftProfile::class)->name('aircraft.profile');
     });

@@ -26,6 +26,10 @@
                 <input wire:model.live.debounce.300ms="search" type="text" placeholder="Search logs…" class="gaf-input pl-10"/>
             </div>
             <input wire:model.live="dateFilter" type="date" class="gaf-input sm:w-44"/>
+            <button wire:click="exportCsv" class="btn-gaf-outline shrink-0 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Export CSV
+            </button>
         </div>
     </div>
     <div class="gaf-card overflow-hidden">
@@ -56,6 +60,11 @@
                         <td class="px-5 py-3 text-sm font-semibold text-gaf-blue hidden lg:table-cell">{{ $log->hours_spent ? $log->hours_spent.' hrs' : '—' }}</td>
                         <td class="px-5 py-3"><span class="badge bg-sky-100 text-sky-700">{{ ucfirst(str_replace('_',' ',$log->maintenance_type ?? 'general')) }}</span></td>
                         <td class="px-5 py-3 text-right whitespace-nowrap">
+                            @can('approve', $log)
+                                @if($log->status !== 'approved')
+                                <button wire:click="approve({{ $log->id }})" class="text-green-500 hover:text-green-700 text-xs font-semibold mr-3 transition-colors">Approve</button>
+                                @endif
+                            @endcan
                             @can('update', $log)
                             <button wire:click="openEdit({{ $log->id }})" class="text-gaf-blue hover:text-gaf-navy text-xs font-semibold mr-3 transition-colors">Edit</button>
                             @endcan

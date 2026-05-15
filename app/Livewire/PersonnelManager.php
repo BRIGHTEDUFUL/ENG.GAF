@@ -38,6 +38,25 @@ class PersonnelManager extends Component
     public function updatedSearch(): void { $this->resetPage(); }
     public function updatedRoleFilter(): void { $this->resetPage(); }
 
+    public function exportCsv()
+    {
+        $this->authorizeAccess();
+
+        $personnel = User::with('wing')
+            ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%")->orWhere('email', 'like', "%{$this->search}%"))
+            ->when($this->roleFilter, fn($q) => $q->where('role', $this->roleFilter))
+            ->get();
+
+        $csvData = "ID,Name,Email,Role,Rank,Wing\n";
+        foreach ($personnel as $p) {
+            $csvData .= "{$p->id},\"" . str_replace('"', '""', $p->name) . "\",{$p->email},{$p->role},{$p->rank},{$p->wing?->name}\n";
+        }
+
+        return response()->streamDownload(function () use ($csvData) {
+            echo $csvData;
+        }, 'personnel_export_' . date('Y-m-d') . '.csv');
+    }
+
     public function openCreate(): void
     {
         $this->authorizeAccess();

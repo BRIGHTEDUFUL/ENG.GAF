@@ -146,13 +146,13 @@
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Incident Title <span class="text-red-400">*</span></label>
-                            <input wire:model="title" type="text" class="gaf-input" placeholder="Brief, descriptive title of what occurred"/>
-                            @error('title')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            <input wire:model="form.title" type="text" class="gaf-input" placeholder="Brief, descriptive title of what occurred"/>
+                            @error('form.title')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Description</label>
-                            <textarea wire:model="description" rows="3" class="gaf-input resize-none" placeholder="Detailed account of the incident — what happened, when, how it was discovered…"></textarea>
-                            @error('description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <textarea wire:model="form.description" rows="3" class="gaf-input resize-none" placeholder="Detailed account of the incident — what happened, when, how it was discovered…"></textarea>
+                            @error('form.description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -165,33 +165,33 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Severity <span class="text-red-400">*</span></label>
-                            <select wire:model="severity" class="gaf-input">
+                            <select wire:model="form.severity" class="gaf-input">
                                 <option value="low">🟢  Low</option>
                                 <option value="medium">🟡  Medium</option>
                                 <option value="high">🟠  High</option>
                                 <option value="critical">🔴  Critical</option>
                             </select>
-                            @error('severity')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.severity')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status <span class="text-red-400">*</span></label>
-                            <select wire:model="status" class="gaf-input">
+                            <select wire:model="form.status" class="gaf-input">
                                 <option value="open">🔴  Open</option>
                                 <option value="under-investigation">🔵  Under Investigation</option>
                                 <option value="resolved">🟢  Resolved</option>
                                 <option value="closed">⚫  Closed</option>
                             </select>
-                            @error('status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Incident Date <span class="text-red-400">*</span></label>
-                            <input wire:model="incident_date" type="date" class="gaf-input"/>
-                            @error('incident_date')<p class="mt-1 text-xs text-red-500">⚠ {{ $message }}</p>@enderror
+                            <input wire:model="form.incident_date" type="date" class="gaf-input"/>
+                            @error('form.incident_date')<p class="mt-1 text-xs text-red-500">⚠ {{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Location</label>
-                            <input wire:model="location" type="text" class="gaf-input" placeholder="e.g. Hangar 3, Runway 09L"/>
-                            @error('location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <input wire:model="form.location" type="text" class="gaf-input" placeholder="e.g. Hangar 3, Runway 09L"/>
+                            @error('form.location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -204,19 +204,19 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Aircraft Involved</label>
-                            <select wire:model="aircraft_id" class="gaf-input">
+                            <select wire:model="form.aircraft_id" class="gaf-input">
                                 <option value="">— None / Unknown —</option>
                                 @foreach($aircraft as $ac)<option value="{{ $ac->id }}">{{ $ac->tail_number }} — {{ $ac->model }}</option>@endforeach
                             </select>
-                            @error('aircraft_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.aircraft_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Assigned Investigator</label>
-                            <select wire:model="investigator_id" class="gaf-input">
+                            <select wire:model="form.assigned_investigator_id" class="gaf-input">
                                 <option value="">— Unassigned —</option>
-                                @foreach($personnel as $p)<option value="{{ $p->id }}">{{ $p->rank ? $p->rank.' ' : '' }}{{ $p->name }}</option>@endforeach
+                                @foreach($investigators as $p)<option value="{{ $p->id }}">{{ $p->rank ? $p->rank.' ' : '' }}{{ $p->name }}</option>@endforeach
                             </select>
-                            @error('investigator_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.assigned_investigator_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>

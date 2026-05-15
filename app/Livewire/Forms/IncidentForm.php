@@ -13,6 +13,9 @@ class IncidentForm extends Form
     #[Validate('required|string|max:200')]
     public string $title = '';
 
+    #[Validate('nullable|string')]
+    public ?string $location = '';
+
     #[Validate('required|string')]
     public string $description = '';
 
@@ -43,7 +46,8 @@ class IncidentForm extends Form
         $this->assigned_investigator_id = $incident->assigned_investigator_id;
         $this->severity = $incident->severity;
         $this->status = $incident->status;
-        $this->incident_date = $incident->incident_date->format('Y-m-d\TH:i');
+        $this->incident_date = $incident->incident_date->format('Y-m-d');
+        $this->location = $incident->location;
         $this->resolution_notes = $incident->resolution_notes;
     }
 

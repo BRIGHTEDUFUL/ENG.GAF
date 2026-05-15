@@ -27,8 +27,28 @@ class FlightLogManager extends Component
     public ?int $editingId = null;
     public ?int $deletingId = null;
 
-    public function updatedSearch(): void { $this->resetPage(); }
     public function updatedMissionFilter(): void { $this->resetPage(); }
+
+    public function exportCsv()
+    {
+        $this->authorize('viewAny', FlightLog::class);
+
+        $logs = FlightLog::with(['aircraft', 'pilot', 'coPilot'])
+            ->when($this->search, fn($q) => $q->where('departure_location', 'like', "%{$this->search}%")
+                                              ->orWhere('arrival_location', 'like', "%{$this->search}%")
+                                              ->orWhereHas('aircraft', fn($q) => $q->where('tail_number', 'like', "%{$this->search}%")))
+            ->when($this->missionFilter, fn($q) => $q->where('mission_type', $this->missionFilter))
+            ->get();
+
+        $csvData = "ID,Aircraft,Pilot,Mission,Departure,Duration\n";
+        foreach ($logs as $log) {
+            $csvData .= "{$log->id},{$log->aircraft?->tail_number},{$log->pilot?->name},{$log->mission_type},{$log->departure_time?->format('Y-m-d H:i')},{$log->flight_duration_minutes}\n";
+        }
+
+        return response()->streamDownload(function () use ($csvData) {
+            echo $csvData;
+        }, 'flight_logs_export_' . date('Y-m-d') . '.csv');
+    }
 
     public function openCreate(): void
     {

@@ -34,6 +34,10 @@
                 <option value="transport">Transport</option>
                 <option value="reconnaissance">Reconnaissance</option>
             </select>
+            <button wire:click="exportCsv" class="btn-gaf-outline shrink-0 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Export CSV
+            </button>
         </div>
     </div>
     <div class="gaf-card overflow-hidden">
@@ -101,19 +105,19 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Aircraft <span class="text-red-400">*</span></label>
-                            <select wire:model="aircraft_id" class="gaf-input">
+                            <select wire:model="form.aircraft_id" class="gaf-input">
                                 <option value="">— Select Aircraft —</option>
                                 @foreach($aircraft as $ac)<option value="{{ $ac->id }}">{{ $ac->tail_number }} — {{ $ac->model }}</option>@endforeach
                             </select>
-                            @error('aircraft_id')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            @error('form.aircraft_id')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Pilot in Command <span class="text-red-400">*</span></label>
-                            <select wire:model="pilot_id" class="gaf-input">
+                            <select wire:model="form.pilot_id" class="gaf-input">
                                 <option value="">— Select Pilot —</option>
                                 @foreach($pilots as $p)<option value="{{ $p->id }}">{{ $p->rank ? $p->rank.' ' : '' }}{{ $p->name }}</option>@endforeach
                             </select>
-                            @error('pilot_id')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            @error('form.pilot_id')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -126,32 +130,32 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Mission Type <span class="text-red-400">*</span></label>
-                            <select wire:model="mission_type" class="gaf-input">
+                            <select wire:model="form.mission_type" class="gaf-input">
                                 <option value="training">🎯  Training</option>
                                 <option value="patrol">👁  Patrol</option>
                                 <option value="combat">⚔  Combat</option>
                                 <option value="transport">📦  Transport</option>
                                 <option value="reconnaissance">🔍  Reconnaissance</option>
                             </select>
-                            @error('mission_type')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.mission_type')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Duration <span class="text-gray-400 font-normal">(auto-calc or manual)</span></label>
                             <div class="relative">
-                                <input wire:model="flight_duration_minutes" type="number" min="0" class="gaf-input pr-12" placeholder="e.g. 90"/>
+                                <input wire:model="form.flight_duration_minutes" type="number" min="0" class="gaf-input pr-12" placeholder="e.g. 90"/>
                                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">mins</span>
                             </div>
-                            @error('flight_duration_minutes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.flight_duration_minutes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Departure Time <span class="text-red-400">*</span></label>
-                            <input wire:model="departure_time" type="datetime-local" class="gaf-input"/>
-                            @error('departure_time')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            <input wire:model="form.departure_time" type="datetime-local" class="gaf-input"/>
+                            @error('form.departure_time')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Arrival Time <span class="text-red-400">*</span></label>
-                            <input wire:model="arrival_time" type="datetime-local" class="gaf-input"/>
-                            @error('arrival_time')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            <input wire:model="form.arrival_time" type="datetime-local" class="gaf-input"/>
+                            @error('form.arrival_time')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -164,18 +168,18 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Departure Location</label>
-                            <input wire:model="departure_location" type="text" class="gaf-input" placeholder="e.g. Kotoka Intl, RWY 21"/>
-                            @error('departure_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <input wire:model="form.departure_location" type="text" class="gaf-input" placeholder="e.g. Kotoka Intl, RWY 21"/>
+                            @error('form.departure_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Arrival Location</label>
-                            <input wire:model="arrival_location" type="text" class="gaf-input" placeholder="e.g. Takoradi Air Base"/>
-                            @error('arrival_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <input wire:model="form.arrival_location" type="text" class="gaf-input" placeholder="e.g. Takoradi Air Base"/>
+                            @error('form.arrival_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div class="sm:col-span-2">
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Flight Notes</label>
-                            <textarea wire:model="notes" rows="2" class="gaf-input resize-none" placeholder="Any observations, anomalies, or debrief notes from this sortie…"></textarea>
-                            @error('notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <textarea wire:model="form.notes" rows="2" class="gaf-input resize-none" placeholder="Any observations, anomalies, or debrief notes from this sortie…"></textarea>
+                            @error('form.notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
