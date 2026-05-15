@@ -106,39 +106,45 @@
                 <button wire:click="$set('showModal',false)" class="text-white/70 hover:text-white"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button>
             </div>
             <div class="modal-body">
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">First Name *</label>
-                        <input wire:model="first_name" type="text" class="gaf-input"/>
-                        @error('first_name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Full Name *</label>
+                        <input wire:model="form.name" type="text" class="gaf-input"/>
+                        @error('form.name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Last Name *</label>
-                        <input wire:model="last_name" type="text" class="gaf-input"/>
-                        @error('last_name')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Email Address *</label>
+                        <input wire:model="form.email" type="email" class="gaf-input"/>
+                        @error('form.email')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Password</label>
+                        <input wire:model="form.password" type="password" class="gaf-input" placeholder="Leave blank for default/unchanged"/>
+                        @error('form.password')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Rank</label>
-                        <input wire:model="rank" type="text" class="gaf-input" placeholder="e.g. Flight Lieutenant"/>
+                        <input wire:model="form.rank" type="text" class="gaf-input" placeholder="e.g. Flight Lieutenant"/>
+                        @error('form.rank')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Service Number</label>
-                        <input wire:model="service_number" type="text" class="gaf-input"/>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">System Role</label>
+                        <select wire:model="form.role" class="gaf-input">
+                            <option value="engineer">Engineer</option>
+                            <option value="supervisor">Supervisor</option>
+                            <option value="commander">Commander</option>
+                            <option value="auditor">Auditor</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        @error('form.role')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Wing</label>
-                        <select wire:model="wing_id" class="gaf-input">
-                            <option value="">— None —</option>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Wing Assignment</label>
+                        <select wire:model="form.wing_id" class="gaf-input">
+                            <option value="">— None (Unassigned) —</option>
                             @if(isset($wings))@foreach($wings as $w)<option value="{{ $w->id }}">{{ $w->name }}</option>@endforeach@endif
                         </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Specialization</label>
-                        <input wire:model="specialization" type="text" class="gaf-input" placeholder="e.g. Avionics"/>
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Date of Birth</label>
-                        <input wire:model="date_of_birth" type="date" class="gaf-input"/>
+                        @error('form.wing_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                 </div>
             </div>
@@ -159,7 +165,10 @@
             <p class="text-sm text-gray-500 mb-6">This action cannot be undone.</p>
             <div class="flex gap-3">
                 <button wire:click="$set('showDeleteConfirm',false)" class="btn-gaf-outline flex-1">Cancel</button>
-                <button wire:click="deletePersonnel" class="btn-danger flex-1">Remove</button>
+                <button wire:click="deletePersonnel" wire:loading.attr="disabled" class="btn-danger flex-1">
+                    <span wire:loading.remove wire:target="deletePersonnel">Remove</span>
+                    <span wire:loading wire:target="deletePersonnel">Removing...</span>
+                </button>
             </div>
         </div>
     </div>

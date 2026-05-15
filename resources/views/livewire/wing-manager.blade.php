@@ -163,7 +163,10 @@
                 <p class="text-sm text-gray-500 text-center mb-6">This action cannot be undone.</p>
                 <div class="flex gap-3">
                     <button wire:click="$set('showDeleteConfirm',false)" class="btn-gaf-outline flex-1">Cancel</button>
-                    <button wire:click="deleteWing" class="btn-danger flex-1">Delete</button>
+                    <button wire:click="deleteWing" wire:loading.attr="disabled" class="btn-danger flex-1">
+                        <span wire:loading.remove wire:target="deleteWing">Delete</span>
+                        <span wire:loading wire:target="deleteWing">Deleting...</span>
+                    </button>
                 </div>
             </div>
         </div>

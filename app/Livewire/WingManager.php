@@ -54,6 +54,22 @@ class WingManager extends Component
     public function save(): void
     {
         $this->form->validate();
+
+        $uniqueNameRule = $this->editingId === null ? 'unique:wings,name' : 'unique:wings,name,' . $this->editingId;
+        $uniqueCodeRule = $this->editingId === null ? 'unique:wings,code' : 'unique:wings,code,' . $this->editingId;
+        
+        $validator = \Illuminate\Support\Facades\Validator::make(
+            ['name' => $this->form->name, 'code' => $this->form->code],
+            ['name' => $uniqueNameRule, 'code' => $uniqueCodeRule]
+        );
+        
+        if ($validator->fails()) {
+            foreach ($validator->errors()->toArray() as $field => $messages) {
+                $this->addError('form.' . $field, $messages[0]);
+            }
+            return;
+        }
+
         $data = [
             'name'             => $this->form->name,
             'code'             => strtoupper($this->form->code),

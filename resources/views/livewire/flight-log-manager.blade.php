@@ -113,37 +113,45 @@
                             <option value="transport">Transport</option>
                             <option value="reconnaissance">Reconnaissance</option>
                         </select>
+                        @error('mission_type')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Departure</label>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Departure *</label>
                         <input wire:model="departure_time" type="datetime-local" class="gaf-input"/>
+                        @error('departure_time')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Arrival</label>
+                        <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Arrival *</label>
                         <input wire:model="arrival_time" type="datetime-local" class="gaf-input"/>
+                        @error('arrival_time')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Duration (mins)</label>
                         <input wire:model="flight_duration_minutes" type="number" class="gaf-input"/>
+                        @error('flight_duration_minutes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Departure Location</label>
                         <input wire:model="departure_location" type="text" class="gaf-input"/>
+                        @error('departure_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Arrival Location</label>
                         <input wire:model="arrival_location" type="text" class="gaf-input"/>
+                        @error('arrival_location')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-sky-700 uppercase tracking-wide mb-1.5">Notes</label>
                     <textarea wire:model="notes" rows="2" class="gaf-input resize-none"></textarea>
+                    @error('notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
             </div>
             <div class="modal-footer">
                 <button wire:click="$set('showModal',false)" class="btn-gaf-outline">Cancel</button>
                 <button wire:click="save" wire:loading.attr="disabled" class="btn-gaf">
-                    <span wire:loading.remove>Save Flight</span><span wire:loading>Saving…</span>
+                    <span wire:loading.remove wire:target="save">Save Flight</span>
+                    <span wire:loading wire:target="save">Saving...</span>
                 </button>
             </div>
         </div>
