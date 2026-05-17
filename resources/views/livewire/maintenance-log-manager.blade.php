@@ -158,7 +158,7 @@
                     </legend>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         <div class="sm:col-span-2">
-                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Maintenance Type</label>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Status <span class="text-red-400">*</span></label>
                             <select wire:model="status" class="gaf-input">
                                 <option value="draft">📝  Draft</option>
                                 <option value="submitted">📤  Submitted</option>

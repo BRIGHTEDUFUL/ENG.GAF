@@ -114,18 +114,18 @@ class MaintenanceTaskManager extends Component
             // Mark task as completed
             $task->update([
                 'status' => 'completed',
-                'completed_at' => now()
+                'completed_at' => now(),
             ]);
 
-            // Auto-generate a Maintenance Log draft
+            // Auto-generate a Maintenance Log draft (using correct fillable fields)
             \App\Models\MaintenanceLog::create([
-                'aircraft_id' => $task->aircraft_id,
-                'task_id' => $task->id,
-                'technician_id' => auth()->id(),
-                'log_date' => now(),
-                'maintenance_type' => 'scheduled', // default
-                'description' => "Completed task: {$task->title}\n\nNotes:\n",
-                'status' => 'draft',
+                'maintenance_task_id' => $task->id,
+                'aircraft_id'         => $task->aircraft_id,
+                'engineer_id'         => auth()->id(),
+                'work_performed'      => "Completed task: {$task->title}\n\nNotes:\n",
+                'log_date'            => now()->toDateString(),
+                'hours_spent'         => 0,
+                'status'              => 'draft',
             ]);
 
             $this->dispatch('notify', type: 'success', message: 'Task closed and Maintenance Log draft created!');

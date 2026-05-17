@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,135 +13,288 @@
   --gaf-accent:  #06B6D4;
   --gaf-light:   #E0F2FE;
   --gaf-bg:      #F0F7FF;
+  --sidebar-w:   260px;
+  --sidebar-collapsed: 72px;
+  --header-h:    64px;
+  --radius-card: 20px;
+  --transition:  cubic-bezier(0.4, 0, 0.2, 1);
+  --bounce:      cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ─── Base ───────────────────────────────────────────────────── */
 @layer base {
   html { scroll-behavior: smooth; }
-  body { font-family: 'Inter', sans-serif; background: var(--gaf-bg); }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--gaf-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   * { box-sizing: border-box; }
   ::selection { background: var(--gaf-sky); color: white; }
+
+  /* Premium scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #EFF6FF; }
-  ::-webkit-scrollbar-thumb { background: #BAE6FD; border-radius: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: #7dd3fc;
+    border-radius: 99px;
+  }
   ::-webkit-scrollbar-thumb:hover { background: var(--gaf-sky); }
+
+  /* Focus ring system */
+  :focus-visible {
+    outline: 2px solid var(--gaf-sky);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
 }
 
 /* ─── Components ─────────────────────────────────────────────── */
 @layer components {
 
-  /* --- Glassmorphism card --- */
-  .gaf-glass {
-    @apply bg-white/80 backdrop-blur-sm border border-sky-100 shadow-card;
-  }
-
-  /* --- GAF gradient button --- */
+  /* ─── Buttons ────────────────── */
   .btn-gaf {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
-           font-semibold text-sm text-white transition-all duration-200
+           font-semibold text-sm text-white transition-all duration-300
            bg-gradient-to-r from-gaf-blue to-gaf-sky
            hover:from-gaf-navy hover:to-gaf-blue
-           hover:shadow-gaf active:scale-95 focus:outline-none focus:ring-2
-           focus:ring-sky-400 focus:ring-offset-2;
+           hover:shadow-gaf-glow hover:-translate-y-0.5
+           active:scale-95 active:translate-y-0
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-sky-400 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
   }
 
   .btn-gaf-outline {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
            font-semibold text-sm border-2 border-gaf-blue text-gaf-blue bg-white
-           hover:bg-gaf-blue hover:text-white transition-all duration-200
-           hover:shadow-gaf active:scale-95 focus:outline-none focus:ring-2
-           focus:ring-sky-400 focus:ring-offset-2;
+           hover:bg-gaf-blue hover:text-white hover:-translate-y-0.5
+           transition-all duration-300 hover:shadow-gaf
+           active:scale-95 active:translate-y-0
+           focus-visible:outline-none focus-visible:ring-2
+           focus-visible:ring-sky-400 focus-visible:ring-offset-2
+           disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none;
   }
 
   .btn-danger {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl
            font-semibold text-sm text-white bg-red-500
-           hover:bg-red-600 transition-all duration-200 active:scale-95;
+           hover:bg-red-600 hover:-translate-y-0.5 hover:shadow-[0_4px_20px_rgba(239,68,68,0.3)]
+           transition-all duration-300 active:scale-95 active:translate-y-0
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400;
   }
 
-  /* --- Nav link active state --- */
-  .nav-link {
-    @apply flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium
-           transition-all duration-200 text-sky-700 hover:bg-sky-50 hover:text-gaf-blue;
-  }
-  .nav-link.active {
-    @apply bg-gradient-to-r from-gaf-blue to-gaf-sky text-white shadow-gaf;
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs rounded-lg;
   }
 
-  /* --- GAF Input --- */
+  /* ─── Inputs ────────────────── */
   .gaf-input {
-    @apply w-full bg-white border border-sky-200 rounded-xl px-4 py-2.5 text-sm
-           text-gray-800 placeholder-gray-400 transition-all duration-200
-           focus:border-gaf-sky focus:ring-2 focus:ring-sky-200 focus:outline-none;
+    @apply w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm
+           text-gray-800 placeholder-slate-400 transition-all duration-200
+           focus:border-gaf-sky focus:ring-2 focus:ring-sky-100 focus:outline-none
+           hover:border-slate-300 shadow-sm hover:shadow;
   }
 
-  /* --- GAF Card --- */
+  .gaf-input:disabled {
+    @apply bg-slate-50 text-slate-400 cursor-not-allowed shadow-none;
+  }
+
+  /* ─── Cards ─────────────────── */
   .gaf-card {
-    @apply bg-white rounded-2xl border border-sky-100 shadow-card overflow-hidden
-           transition-all duration-300 hover:shadow-gaf hover:-translate-y-0.5;
+    @apply bg-white rounded-[20px] border border-slate-100 shadow-card overflow-hidden
+           transition-all duration-300 hover:shadow-gaf-lg hover:-translate-y-1;
   }
 
-  /* --- Stat card --- */
+  .gaf-card-flat {
+    @apply bg-white rounded-[20px] border border-slate-100 shadow-card overflow-hidden;
+  }
+
   .stat-card {
-    @apply gaf-card p-5 flex flex-col gap-3;
+    @apply gaf-card p-5 flex flex-col gap-3 relative z-10;
+  }
+  .stat-card::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-0 transition-opacity duration-300 rounded-[20px] pointer-events-none;
+  }
+  .stat-card:hover::after {
+    @apply opacity-100;
   }
 
-  /* --- Badge --- */
-  .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+  .gaf-glass {
+    @apply bg-white/80 backdrop-blur-md border border-white/60 shadow-card;
   }
 
-  /* --- Table row hover --- */
+  /* ─── Table rows ────────────── */
   .trow {
-    @apply border-b border-sky-50 hover:bg-sky-50/60 transition-colors duration-150;
+    @apply border-b border-slate-50 hover:bg-sky-50/60 transition-colors duration-200 cursor-default;
   }
 
-  /* --- Section header --- */
+  /* ─── Badges ────────────────── */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
+           tracking-wide shadow-sm;
+  }
+
+  /* ─── Section layouts ───────── */
   .section-header {
     @apply flex items-center justify-between mb-6;
   }
-
-  /* --- Page heading --- */
-  .page-heading { @apply text-xl font-bold text-gaf-navy; }
+  .page-heading { @apply text-xl font-bold text-gaf-navy tracking-tight; }
   .page-sub     { @apply text-sm text-sky-600 mt-0.5; }
 
-  /* --- Modal overlay --- */
+  /* ─── Modal system ──────────── */
   .modal-overlay {
-    @apply fixed inset-0 z-40 flex items-center justify-center p-4
-           bg-gaf-navy/50 backdrop-blur-sm;
+    @apply fixed inset-0 z-40 flex items-end sm:items-center justify-center
+           p-0 sm:p-4 bg-gaf-navy/70 backdrop-blur-xl transition-opacity duration-300;
   }
   .modal-panel {
-    @apply relative z-50 w-full max-w-2xl bg-white rounded-2xl shadow-gaf-lg
-           border border-sky-100 overflow-hidden animate-slide-up;
+    @apply relative z-50 w-full sm:max-w-2xl bg-white/95 backdrop-blur-sm
+           rounded-t-3xl sm:rounded-3xl shadow-gaf-xl
+           border border-white/20 overflow-hidden animate-modal-up;
   }
   .modal-header {
-    @apply flex items-center justify-between px-6 py-4 bg-gaf-gradient text-white;
+    @apply flex items-center justify-between px-6 py-4 bg-gaf-gradient text-white
+           border-b border-white/10 shadow-sm;
   }
-  .modal-body { @apply px-6 py-5 space-y-4 max-h-[65vh] overflow-y-auto; }
+  .modal-body {
+    @apply px-6 py-5 space-y-5 max-h-[70vh] overflow-y-auto;
+  }
   .modal-footer {
-    @apply flex justify-end gap-3 px-6 py-4 border-t border-sky-100 bg-sky-50/50;
+    @apply flex justify-end gap-3 px-6 py-4 border-t border-slate-100 bg-slate-50/80 backdrop-blur-md;
   }
 
-  /* --- Shimmer loading --- */
-  .shimmer-line {
-    @apply h-4 rounded bg-sky-100 animate-pulse;
+  /* ─── Nav (sidebar items) ───── */
+  .nav-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium
+           transition-all duration-300 text-sky-100/80 hover:bg-white/10 hover:text-white
+           hover:shadow-sm relative group overflow-hidden;
   }
-
-  /* --- Hero wave animation --- */
-  .wave-bg::before {
+  .nav-link::before {
     content: '';
-    @apply absolute inset-0 opacity-20;
-    background: radial-gradient(circle at 20% 50%, #0EA5E9 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, #0B4FA3 0%, transparent 50%),
-                radial-gradient(circle at 60% 80%, #06B6D4 0%, transparent 50%);
-    animation: pulse 4s ease-in-out infinite;
+    @apply absolute inset-0 bg-gradient-to-r from-white/0 via-white/5 to-white/0 translate-x-[-100%] transition-transform duration-500 ease-out;
+  }
+  .nav-link:hover::before {
+    @apply translate-x-[100%];
+  }
+  .nav-link.active {
+    @apply bg-white/15 text-white shadow-inner-sm;
+  }
+
+  /* ─── Shimmer loading ───────── */
+  .shimmer-line {
+    @apply h-4 rounded-lg;
+    background: linear-gradient(90deg, #e8f4fd 25%, #cbe8fb 50%, #e8f4fd 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  /* ─── Table container ───────── */
+  .table-container {
+    @apply gaf-card-flat overflow-x-auto;
+  }
+  .table-base {
+    @apply w-full text-sm;
+  }
+  .th {
+    @apply px-4 py-3 text-left text-[11px] font-bold text-slate-500 uppercase
+           tracking-wider bg-slate-50/80 border-b border-slate-100 backdrop-blur-sm sticky top-0;
+  }
+  .td {
+    @apply px-4 py-3.5 text-sm text-gray-700 align-middle;
+  }
+
+  /* ─── Status pill ───────────── */
+  .status-active      { @apply badge bg-emerald-50 text-emerald-700 border border-emerald-200; }
+  .status-maintenance { @apply badge bg-amber-50 text-amber-700 border border-amber-200; }
+  .status-grounded    { @apply badge bg-red-50 text-red-700 border border-red-200; }
+  .status-retired     { @apply badge bg-slate-100 text-slate-600 border border-slate-200; }
+
+  /* ─── Priority pill ─────────── */
+  .priority-critical  { @apply badge bg-red-50 text-red-700 border border-red-200; }
+  .priority-high      { @apply badge bg-orange-50 text-orange-700 border border-orange-200; }
+  .priority-medium    { @apply badge bg-amber-50 text-amber-700 border border-amber-200; }
+  .priority-low       { @apply badge bg-green-50 text-green-700 border border-green-200; }
+
+  /* ─── Search bar ─────────────── */
+  .search-bar {
+    @apply relative flex items-center transition-all duration-300;
+  }
+  .search-bar input {
+    @apply gaf-input pl-10 pr-4 py-2 rounded-xl border-slate-200 bg-slate-50
+           focus:bg-white focus:shadow-md;
+  }
+  .search-bar .icon {
+    @apply absolute left-3 text-slate-400 pointer-events-none transition-colors duration-200;
+  }
+  .search-bar input:focus ~ .icon {
+    @apply text-gaf-sky;
+  }
+
+  /* ─── Divider with label ────── */
+  .divider-label {
+    @apply text-[10px] font-black uppercase tracking-[0.18em] text-white/30
+           px-2 pt-4 pb-1 select-none;
+  }
+
+  /* ─── Toast notifications ────── */
+  .toast-container {
+    @apply fixed bottom-5 right-5 z-[60] flex flex-col gap-2 pointer-events-none;
+  }
+  .toast {
+    @apply flex items-center gap-3 px-4 py-3 rounded-2xl shadow-gaf-xl
+           border text-sm font-medium pointer-events-auto
+           animate-slide-in-left min-w-[260px] max-w-sm backdrop-blur-md;
+  }
+  .toast-success { @apply bg-white/90 border-emerald-200 text-emerald-800; }
+  .toast-error   { @apply bg-white/90 border-red-200 text-red-800; }
+  .toast-warning { @apply bg-white/90 border-amber-200 text-amber-800; }
+  .toast-info    { @apply bg-white/90 border-sky-200 text-sky-800; }
+
+  /* ─── Hero gradient banner ───── */
+  .hero-banner {
+    @apply relative overflow-hidden rounded-3xl bg-gaf-gradient
+           p-6 mb-6 shadow-gaf group;
+  }
+  .hero-banner-grid {
+    @apply absolute inset-0 opacity-[0.07] transition-opacity duration-700 group-hover:opacity-[0.12];
+    background-image:
+      linear-gradient(rgba(255,255,255,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+  .hero-banner-glow {
+    @apply absolute -top-10 -right-10 w-56 h-56 rounded-full
+           bg-sky-400/20 blur-3xl pointer-events-none transition-all duration-700 group-hover:scale-110 group-hover:bg-sky-400/30;
+  }
+  .hero-banner-glow2 {
+    @apply absolute -bottom-8 left-1/3 w-40 h-40 rounded-full
+           bg-blue-500/20 blur-2xl pointer-events-none transition-all duration-700 group-hover:-translate-y-4;
+  }
+
+  /* ─── Empty state ─────────────── */
+  .empty-state {
+    @apply flex flex-col items-center justify-center py-16 text-center gap-3 animate-fade-in;
+  }
+  .empty-state svg {
+    @apply w-12 h-12 text-slate-200 animate-float;
+  }
+  .empty-state p {
+    @apply text-sm text-slate-400 font-medium;
   }
 }
 
 /* ─── Utilities ──────────────────────────────────────────────── */
 @layer utilities {
   .text-gradient {
-    background: linear-gradient(135deg, #0B4FA3, #0EA5E9);
+    background: linear-gradient(135deg, var(--gaf-navy), var(--gaf-sky));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #F59E0B, #D97706);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -148,24 +303,174 @@
   .bg-gaf-gradient {
     background: linear-gradient(135deg, #0C2D6B 0%, #0B4FA3 45%, #0EA5E9 100%);
   }
+  .bg-gaf-gradient-subtle {
+    background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+  }
 
-  .border-gaf { @apply border-gaf-blue; }
+  .border-gaf { border-color: var(--gaf-blue); }
 
   .transition-bounce {
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition: all 0.3s var(--bounce);
+  }
+
+  /* Grid background pattern */
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.12) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.12) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  /* Dot pattern */
+  .dot-bg {
+    background-image: radial-gradient(rgba(14,165,233,0.15) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Glow ring */
+  .ring-glow {
+    box-shadow: 0 0 0 4px rgba(14,165,233,0.2);
+  }
+
+  /* Number counters animation */
+  .num-counter {
+    @apply font-black tabular-nums;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Subtle inner highlight */
+  .inner-highlight {
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.6);
+  }
+
+  /* Frosted chip */
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs
+           font-semibold bg-white/15 border border-white/20 text-white/90
+           backdrop-blur-sm;
   }
 }
 
-/* ─── Livewire page transitions ──────────────────────────────── */
-[wire\:loading] { opacity: 0.6; }
-[wire\:loading\.class] { }
+/* ─── Keyframe Animations ─────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
-/* ─── Alpine.js transitions ──────────────────────────────────── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes modalUp {
+  from { opacity: 0; transform: translateY(32px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideBar {
+  from { width: 0%; }
+  to   { width: var(--bar-width); }
+}
+
+@keyframes ping-once {
+  0%   { transform: scale(1); opacity: 1; }
+  50%  { transform: scale(1.5); opacity: 0.4; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ─── Tailwind animation classes ──────────────────────────────── */
+.animate-fade-in       { animation: fadeIn 0.45s ease-out both; }
+.animate-slide-up      { animation: slideUp 0.4s ease-out both; }
+.animate-slide-in-left { animation: slideInLeft 0.35s ease-out both; }
+.animate-modal-up      { animation: modalUp 0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-float         { animation: float 6s ease-in-out infinite; }
+.animate-scale-in      { animation: scaleIn 0.3s var(--bounce) both; }
+
+/* ─── Livewire states ────────────────────────────────────────── */
+[wire\:loading]           { opacity: 0.65; pointer-events: none; }
+[wire\:loading\.class]    { }
+.wire-loading-blur        { filter: blur(1px); transition: filter 0.2s; }
+
+/* ─── Alpine ─────────────────────────────────────────────────── */
 [x-cloak] { display: none !important; }
 
-/* ─── Print styles ───────────────────────────────────────────── */
+/* ─── Sidebar active indicator ───────────────────────────────── */
+.nav-active-pill {
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 4px 0 0 4px;
+  background: white;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.nav-link.active .nav-active-pill {
+  opacity: 1;
+}
+
+/* ─── Notification dot pulse ──────────────────────────────────── */
+.notif-dot {
+  @apply absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500
+         rounded-full border-2 border-white;
+  animation: ping-once 2s ease-in-out 3;
+}
+
+/* ─── Table stripe ────────────────────────────────────────────── */
+.table-striped tbody tr:nth-child(even) {
+  background-color: rgba(240,249,255,0.5);
+}
+
+/* ─── Focus ring for sidebar items ──────────────────────────── */
+.sidebar-link:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.6);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+/* ─── Livewire NProgress Customization ──────────────────────── */
+#nprogress .bar {
+  background: var(--gaf-sky) !important;
+  height: 3px !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px var(--gaf-sky), 0 0 5px var(--gaf-sky) !important;
+}
+#nprogress .spinner-icon {
+  border-top-color: var(--gaf-sky) !important;
+  border-left-color: var(--gaf-sky) !important;
+}
+
+/* ─── Print ──────────────────────────────────────────────────── */
 @media print {
-  body { background: white !important; }
+  body { background: white !important; font-size: 11px; }
   nav, aside, header, .no-print { display: none !important; }
-  .print-full { width: 100% !important; }
+  .print-full { width: 100% !important; max-width: none !important; }
+  .gaf-card, .gaf-card-flat {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    break-inside: avoid;
+  }
 }

@@ -84,6 +84,7 @@ class AircraftManager extends Component
             'year_manufactured'     => $this->form->year_manufactured,
             'wing_id'               => $this->form->wing_id,
             'status'                => $this->form->status,
+            'total_flight_hours'    => $this->form->total_flight_hours ?: 0.0,
             'last_maintenance_date' => $this->form->last_maintenance_date ?: null,
             'notes'                 => $this->form->notes ?: null,
         ];

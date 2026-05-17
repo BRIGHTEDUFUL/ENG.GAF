@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
-#[Layout('components.layouts.app', ['heading' => 'Daily Aircraft State'])]
+#[Layout('layouts.app', ['heading' => 'Daily Aircraft State'])]
 class DailyStateManager extends Component
 {
     // ── Filters ─────────────────────────────────────────
@@ -160,6 +160,7 @@ class DailyStateManager extends Component
             $r['remark_number'] = $i + 1;
         }
     }
+
 
     // ── Auto-populate from yesterday ─────────────────────
     public function autoPopulate(): void

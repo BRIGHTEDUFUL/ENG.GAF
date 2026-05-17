@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Aircraft;
 use App\Models\Incident;
 use App\Models\MaintenanceTask;
-use App\Models\Personnel;
 use App\Models\User;
 use App\Models\Wing;
 use Illuminate\Database\Seeder;
@@ -173,8 +172,8 @@ class DatabaseSeeder extends Seeder
         // ----------------------------------------------------------------
         // 6. Personnel records (extend existing)
         // ----------------------------------------------------------------
-        if (Personnel::count() === 0) {
-            Personnel::factory(20)->create();
+        if (User::count() <= 5) {
+            User::factory(20)->create();
         }
 
         $this->command->info('✅ Air Force Engineering System seeded successfully.');

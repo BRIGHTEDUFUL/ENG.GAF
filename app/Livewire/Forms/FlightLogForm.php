@@ -32,8 +32,11 @@ class FlightLogForm extends Form
     #[Validate('required|date|after:departure_time')]
     public string $arrival_time = '';
 
-    #[Validate('required|in:training,operational,test,ferry')]
+    #[Validate('required|in:training,patrol,combat,transport,reconnaissance')]
     public string $mission_type = 'training';
+
+    #[Validate('nullable|integer|min:0')]
+    public ?int $flight_duration_minutes = null;
 
     #[Validate('nullable|integer|min:0')]
     public ?int $max_altitude_ft = null;
@@ -55,6 +58,7 @@ class FlightLogForm extends Form
         $this->departure_time = $log->departure_time->format('Y-m-d\TH:i');
         $this->arrival_time = $log->arrival_time->format('Y-m-d\TH:i');
         $this->mission_type = $log->mission_type;
+        $this->flight_duration_minutes = $log->flight_duration_minutes;
         $this->max_altitude_ft = $log->max_altitude_ft;
         $this->max_speed_knots = $log->max_speed_knots;
         $this->notes = $log->notes;
@@ -64,7 +68,7 @@ class FlightLogForm extends Form
     {
         $this->validate();
         
-        $duration = Carbon::parse($this->departure_time)->diffInMinutes(Carbon::parse($this->arrival_time));
+        $duration = $this->flight_duration_minutes ?? Carbon::parse($this->departure_time)->diffInMinutes(Carbon::parse($this->arrival_time));
         
         $data = $this->except('log');
         $data['flight_duration_minutes'] = $duration;
@@ -86,7 +90,7 @@ class FlightLogForm extends Form
         $this->validate();
         
         $oldDuration = $this->log->flight_duration_minutes;
-        $newDuration = Carbon::parse($this->departure_time)->diffInMinutes(Carbon::parse($this->arrival_time));
+        $newDuration = $this->flight_duration_minutes ?? Carbon::parse($this->departure_time)->diffInMinutes(Carbon::parse($this->arrival_time));
         
         $data = $this->except('log');
         $data['flight_duration_minutes'] = $newDuration;
@@ -124,11 +128,12 @@ class FlightLogForm extends Form
             if (!$exists) {
                 \App\Models\MaintenanceTask::create([
                     'aircraft_id' => $aircraft->id,
-                    'title' => $taskTitle,
+                    'title'       => $taskTitle,
                     'description' => "Automated system alert: Aircraft has reached " . number_format($hours, 1) . " hours and is due for its {$nextService}-hour phase inspection.",
-                    'priority' => 'high',
-                    'status' => 'pending',
-                    'due_date' => now()->addDays(7),
+                    'priority'    => 'high',
+                    'status'      => 'pending',
+                    'due_date'    => now()->addDays(7),
+                    'created_by'  => auth()->id(),
                 ]);
             }
         }

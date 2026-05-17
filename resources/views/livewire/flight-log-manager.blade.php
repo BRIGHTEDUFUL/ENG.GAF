@@ -119,6 +119,14 @@
                             </select>
                             @error('form.pilot_id')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Co-Pilot <span class="text-gray-400 font-normal">(optional)</span></label>
+                            <select wire:model="form.co_pilot_id" class="gaf-input">
+                                <option value="">— Select Co-Pilot —</option>
+                                @foreach($pilots as $p)<option value="{{ $p->id }}">{{ $p->rank ? $p->rank.' ' : '' }}{{ $p->name }}</option>@endforeach
+                            </select>
+                            @error('form.co_pilot_id')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                        </div>
                     </div>
                 </fieldset>
 
@@ -156,6 +164,16 @@
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Arrival Time <span class="text-red-400">*</span></label>
                             <input wire:model="form.arrival_time" type="datetime-local" class="gaf-input"/>
                             @error('form.arrival_time')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Max Altitude <span class="text-gray-400 font-normal">(ft)</span></label>
+                            <input wire:model="form.max_altitude_ft" type="number" min="0" class="gaf-input" placeholder="e.g. 25000"/>
+                            @error('form.max_altitude_ft')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Max Speed <span class="text-gray-400 font-normal">(knots)</span></label>
+                            <input wire:model="form.max_speed_knots" type="number" min="0" class="gaf-input" placeholder="e.g. 450"/>
+                            @error('form.max_speed_knots')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>

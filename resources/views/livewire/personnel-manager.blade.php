@@ -11,7 +11,7 @@
                 <h1 class="text-2xl font-black text-white">Personnel Roster</h1>
                 <p class="text-sky-200 text-sm mt-1">Manage command personnel, ranks and assignments</p>
             </div>
-            @can('create', App\Models\Personnel::class)
+            @can('create', App\Models\User::class)
             <button wire:click="openCreate" class="btn-gaf shrink-0">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                 Add Personnel
@@ -71,21 +71,21 @@
                         <td class="px-5 py-3">
                             <div class="flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-xl bg-gaf-gradient flex items-center justify-center text-white text-xs font-bold shrink-0">
-                                    {{ strtoupper(substr($person->name ?? $person->first_name ?? '?', 0, 2)) }}
+                                    {{ strtoupper(substr($person->name ?? '?', 0, 2)) }}
                                 </div>
                                 <div>
-                                    <p class="text-sm font-semibold text-gaf-navy">{{ $person->full_name ?? ($person->first_name.' '.($person->last_name ?? '')) }}</p>
-                                    <p class="text-xs text-sky-500 xl:hidden">{{ $person->email ?? $person->user?->email ?? '—' }}</p>
+                                    <p class="text-sm font-semibold text-gaf-navy">{{ $person->name }}</p>
+                                    <p class="text-xs text-sky-500 xl:hidden">{{ $person->email }}</p>
                                 </div>
                             </div>
                         </td>
                         <td class="px-5 py-3 hidden md:table-cell">
-                            @php $role = $person->role ?? $person->user?->role ?? null; @endphp
+                            @php $role = $person->role ?? null; @endphp
                             @if($role)<span class="badge {{ $roleC[$role] ?? 'bg-gray-100 text-gray-600' }}">{{ ucfirst($role) }}</span>@else<span class="text-gray-400 text-xs">—</span>@endif
                         </td>
                         <td class="px-5 py-3 text-sm text-gray-600 hidden lg:table-cell">{{ $person->rank ?? '—' }}</td>
                         <td class="px-5 py-3 text-sm text-gray-600 hidden lg:table-cell">{{ $person->wing?->name ?? '—' }}</td>
-                        <td class="px-5 py-3 text-xs text-sky-600 hidden xl:table-cell">{{ $person->email ?? $person->user?->email ?? '—' }}</td>
+                        <td class="px-5 py-3 text-xs text-sky-600 hidden xl:table-cell">{{ $person->email }}</td>
                         <td class="px-5 py-3 text-right whitespace-nowrap">
                             @can('update', $person)
                             <button wire:click="openEdit({{ $person->id }})" class="text-gaf-blue hover:text-gaf-navy text-xs font-semibold mr-3 transition-colors">Edit</button>

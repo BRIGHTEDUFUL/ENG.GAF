@@ -22,7 +22,11 @@ class PersonnelService
             $query->where('role', $filters['role']);
         }
 
-        return $query->paginate($perPage);
+        if (!empty($filters['wing'])) {
+            $query->where('wing_id', $filters['wing']);
+        }
+
+        return $query->orderBy('name')->paginate($perPage);
     }
 
     public function find(int $id): User

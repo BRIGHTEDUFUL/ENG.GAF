@@ -8,11 +8,19 @@ use Livewire\Form;
 
 class PersonnelForm extends Form
 {
+    public ?User $user = null;
+
     #[Rule('required|string|max:100')]
     public string $name = '';
 
-    #[Rule('required|email|max:255')]
     public string $email = '';
+
+    public function rules(): array
+    {
+        return [
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . ($this->user?->id ?? 'NULL')],
+        ];
+    }
 
     #[Rule('nullable|string|min:8')]
     public ?string $password = null;
@@ -28,6 +36,7 @@ class PersonnelForm extends Form
 
     public function setPersonnel(User $personnel): void
     {
+        $this->user = $personnel;
         $this->name = $personnel->name;
         $this->email = $personnel->email;
         $this->role = $personnel->role;
@@ -38,12 +47,13 @@ class PersonnelForm extends Form
 
     public function resetForm(): void
     {
-        $this->name = '';
-        $this->email = '';
-        $this->password = '';
-        $this->role = 'engineer';
-        $this->rank = null;
-        $this->wing_id = null;
+        $this->user    = null;
+        $this->name     = '';
+        $this->email    = '';
+        $this->password = null;
+        $this->role     = 'engineer';
+        $this->rank     = null;
+        $this->wing_id  = null;
 
         $this->resetErrorBag();
     }

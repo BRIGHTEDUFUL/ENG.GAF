@@ -116,7 +116,6 @@ class MaintenanceLogManager extends Component
             MaintenanceLog::findOrFail($this->editingId)->update($data);
             $this->dispatch('notify', type: 'success', message: 'Log updated.');
         } else {
-            $data['engineer_id'] = auth()->id();
             MaintenanceLog::create($data);
             $this->dispatch('notify', type: 'success', message: 'Log created.');
         }

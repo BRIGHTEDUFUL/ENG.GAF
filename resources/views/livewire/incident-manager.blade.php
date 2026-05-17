@@ -154,6 +154,11 @@
                             <textarea wire:model="form.description" rows="3" class="gaf-input resize-none" placeholder="Detailed account of the incident — what happened, when, how it was discovered…"></textarea>
                             @error('form.description')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1.5">Resolution Notes <span class="text-gray-400 font-normal">(optional)</span></label>
+                            <textarea wire:model="form.resolution_notes" rows="2" class="gaf-input resize-none" placeholder="Notes on how this incident was resolved…"></textarea>
+                            @error('form.resolution_notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                        </div>
                     </div>
                 </fieldset>
 

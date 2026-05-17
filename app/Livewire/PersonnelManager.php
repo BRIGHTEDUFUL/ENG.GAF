@@ -22,6 +22,9 @@ class PersonnelManager extends Component
     #[Url(as: 'role', except: '')]
     public string $roleFilter = '';
 
+    #[Url(as: 'wing', except: '')]
+    public string $wingFilter = '';
+
     public bool $showModal = false;
     public bool $showDeleteConfirm = false;
     public ?int $editingId = null;
@@ -37,14 +40,16 @@ class PersonnelManager extends Component
 
     public function updatedSearch(): void { $this->resetPage(); }
     public function updatedRoleFilter(): void { $this->resetPage(); }
+    public function updatedWingFilter(): void { $this->resetPage(); }
 
     public function exportCsv()
     {
-        $this->authorizeAccess();
+        $this->authorize('export', User::class);
 
         $personnel = User::with('wing')
             ->when($this->search, fn($q) => $q->where('name', 'like', "%{$this->search}%")->orWhere('email', 'like', "%{$this->search}%"))
             ->when($this->roleFilter, fn($q) => $q->where('role', $this->roleFilter))
+            ->when($this->wingFilter, fn($q) => $q->where('wing_id', $this->wingFilter))
             ->get();
 
         $csvData = "ID,Name,Email,Role,Rank,Wing\n";
@@ -88,17 +93,18 @@ class PersonnelManager extends Component
         }
 
         $data = [
-            'name' => $this->form->name,
-            'email' => $this->form->email,
-            'role' => $this->form->role,
-            'rank' => $this->form->rank,
+            'name'    => $this->form->name,
+            'email'   => $this->form->email,
+            'role'    => $this->form->role,
+            'rank'    => $this->form->rank,
             'wing_id' => $this->form->wing_id ?: null,
         ];
-        
+
+        // Pass plain text — User model has 'password' => 'hashed' cast which auto-hashes
         if ($this->form->password) {
-            $data['password'] = bcrypt($this->form->password);
+            $data['password'] = $this->form->password;
         } elseif ($this->editingId === null) {
-            $data['password'] = bcrypt('password'); // Default password
+            $data['password'] = 'password'; // Default — user should change on first login
         }
 
         if ($this->editingId === null) {
@@ -130,9 +136,9 @@ class PersonnelManager extends Component
         $this->deletingId = null;
     }
 
-    protected function authorizeAccess()
+    protected function authorizeAccess(): void
     {
-        if (!auth()->user()->isAdmin()) {
+        if (!auth()->user()->hasRole(['admin', 'commander', 'supervisor'])) {
             abort(403, 'Access denied.');
         }
     }
@@ -142,6 +148,7 @@ class PersonnelManager extends Component
         $personnel = $this->personnelService->list([
             'search' => $this->search,
             'role'   => $this->roleFilter,
+            'wing'   => $this->wingFilter,
         ]);
 
         $wings = Wing::orderBy('name')->get();

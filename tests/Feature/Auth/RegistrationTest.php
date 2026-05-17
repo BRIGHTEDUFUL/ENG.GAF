@@ -9,13 +9,17 @@ class RegistrationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_registration_screen_can_be_rendered(): void
+    /**
+     * Self-registration is disabled by design — this is a closed military system.
+     * Accounts are provisioned exclusively by admins via the Personnel Manager.
+     */
+    public function test_registration_screen_is_disabled(): void
     {
         $response = $this->get('/register');
-        $response->assertStatus(200);
+        $response->assertStatus(404);
     }
 
-    public function test_new_users_can_register(): void
+    public function test_registration_endpoint_is_disabled(): void
     {
         $response = $this->post('/register', [
             'name'                  => 'Test User',
@@ -23,7 +27,6 @@ class RegistrationTest extends TestCase
             'password'              => 'password',
             'password_confirmation' => 'password',
         ]);
-        // In a military system, registration redirects to dashboard after auto-login
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $response->assertStatus(404);
     }
 }

@@ -115,23 +115,23 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Tail Number <span class="text-red-400">*</span></label>
-                            <input wire:model="tail_number" type="text" class="gaf-input font-mono" placeholder="GAF-001"/>
-                            @error('tail_number')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            <input wire:model="form.tail_number" type="text" class="gaf-input font-mono" placeholder="GAF-001"/>
+                            @error('form.tail_number')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Aircraft Model <span class="text-red-400">*</span></label>
-                            <input wire:model="model" type="text" class="gaf-input" placeholder="e.g. C-27J Spartan"/>
-                            @error('model')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
+                            <input wire:model="form.model" type="text" class="gaf-input" placeholder="e.g. C-27J Spartan"/>
+                            @error('form.model')<p class="mt-1 text-xs text-red-500 flex items-center gap-1">⚠ {{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Manufacturer</label>
-                            <input wire:model="manufacturer" type="text" class="gaf-input" placeholder="e.g. Alenia Aermacchi"/>
-                            @error('manufacturer')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <input wire:model="form.manufacturer" type="text" class="gaf-input" placeholder="e.g. Alenia Aermacchi"/>
+                            @error('form.manufacturer')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Year Manufactured</label>
-                            <input wire:model="year_manufactured" type="number" class="gaf-input" placeholder="{{ date('Y') }}" min="1940" max="{{ date('Y') }}"/>
-                            @error('year_manufactured')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <input wire:model="form.year_manufactured" type="number" class="gaf-input" placeholder="{{ date('Y') }}" min="1940" max="{{ date('Y') }}"/>
+                            @error('form.year_manufactured')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -144,21 +144,21 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Wing Assignment</label>
-                            <select wire:model="wing_id" class="gaf-input">
+                            <select wire:model="form.wing_id" class="gaf-input">
                                 <option value="">— Unassigned —</option>
                                 @foreach($wings as $w)<option value="{{ $w->id }}">{{ $w->name }}</option>@endforeach
                             </select>
-                            @error('wing_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.wing_id')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Operational Status <span class="text-red-400">*</span></label>
-                            <select wire:model="status" class="gaf-input">
+                            <select wire:model="form.status" class="gaf-input">
                                 <option value="active">✅  Active</option>
                                 <option value="maintenance">🔧  In Maintenance</option>
                                 <option value="grounded">⛔  Grounded</option>
                                 <option value="retired">🚫  Retired</option>
                             </select>
-                            @error('status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.status')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -172,15 +172,15 @@
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Total Flight Hours</label>
                             <div class="relative">
-                                <input wire:model="total_flight_hours" type="number" step="0.1" min="0" class="gaf-input pr-10" placeholder="0.0"/>
+                                <input wire:model="form.total_flight_hours" type="number" step="0.1" min="0" class="gaf-input pr-10" placeholder="0.0"/>
                                 <span class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none">hrs</span>
                             </div>
-                            @error('total_flight_hours')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            @error('form.total_flight_hours')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-gray-600 mb-1.5">Last Maintenance Date</label>
-                            <input wire:model="last_maintenance_date" type="date" class="gaf-input"/>
-                            @error('last_maintenance_date')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                            <input wire:model="form.last_maintenance_date" type="date" class="gaf-input"/>
+                            @error('form.last_maintenance_date')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                         </div>
                     </div>
                 </fieldset>
@@ -188,8 +188,8 @@
                 {{-- Notes --}}
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1.5">Notes / Remarks</label>
-                    <textarea wire:model="notes" rows="3" class="gaf-input resize-none" placeholder="Any additional remarks about this aircraft…"></textarea>
-                    @error('notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
+                    <textarea wire:model="form.notes" rows="3" class="gaf-input resize-none" placeholder="Any additional remarks about this aircraft…"></textarea>
+                    @error('form.notes')<p class="mt-1 text-xs text-red-500">{{ $message }}</p>@enderror
                 </div>
 
             </div>

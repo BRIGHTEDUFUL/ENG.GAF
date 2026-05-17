@@ -11,14 +11,16 @@ class Incident extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
         'title', 'description', 'aircraft_id', 'reported_by',
         'assigned_investigator_id', 'severity', 'status',
         'incident_date', 'location', 'resolution_notes', 'resolved_at',
+    ];
 
     protected function casts(): array
     {
         return [
-            'incident_date' => 'datetime',
+            'incident_date' => 'date',
             'resolved_at'   => 'datetime',
         ];
     }

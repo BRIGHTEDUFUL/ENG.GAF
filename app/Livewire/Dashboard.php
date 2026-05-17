@@ -7,8 +7,8 @@ use App\Models\DailyAircraftState;
 use App\Models\DailyDefect;
 use App\Models\MaintenanceTask;
 use App\Models\Incident;
+use App\Models\User;
 use App\Models\Wing;
-use App\Models\Personnel;
 use Livewire\Component;
 
 class Dashboard extends Component
@@ -23,7 +23,7 @@ class Dashboard extends Component
         $criticalTasks    = MaintenanceTask::where('priority','critical')->where('status','!=','completed')->count();
         $openIncidents    = Incident::where('status','open')->count();
         $criticalIncidents= Incident::where('severity','critical')->whereIn('status',['open','under-investigation'])->count();
-        $totalPersonnel   = Personnel::count();
+        $totalPersonnel   = User::count();
         $activeWings      = Wing::where('status','active')->count();
 
         $recentTasks = MaintenanceTask::with(['aircraft','assignedEngineer'])->latest()->take(6)->get();

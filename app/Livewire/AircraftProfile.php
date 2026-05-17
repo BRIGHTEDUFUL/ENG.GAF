@@ -11,7 +11,7 @@ use App\Models\MaintenanceLog;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 
-#[Layout('components.layouts.app', ['heading' => 'Aircraft Profile'])]
+#[Layout('layouts.app', ['heading' => 'Aircraft Profile'])]
 class AircraftProfile extends Component
 {
     public Aircraft $aircraft;

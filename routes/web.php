@@ -66,6 +66,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/audit-logs', AuditLogViewer::class)->name('audit-logs.index');
     });
 
+    // System Data Manager - admin, commander
+    Route::middleware('role:admin,commander')->group(function () {
+        Route::get('/system-data', \App\Livewire\SystemDataManager::class)->name('system-data.index');
+    });
+
     // Daily Aircraft State — admin, commander, supervisor, auditor
     Route::middleware('role:admin,commander,supervisor,auditor')->group(function () {
         Route::get('/daily-state', DailyStateManager::class)->name('daily-state.index');

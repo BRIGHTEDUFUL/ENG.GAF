@@ -2,7 +2,6 @@
 
 namespace App\Policies;
 
-use App\Models\Personnel;
 use App\Models\User;
 
 class PersonnelPolicy
@@ -14,19 +13,19 @@ class PersonnelPolicy
     }
 
     public function viewAny(User $user): bool { return true; }
-    public function view(User $user, Personnel $personnel): bool { return true; }
+    public function view(User $user, User $personnel): bool { return true; }
 
     public function create(User $user): bool
     {
         return $user->hasRole(['admin', 'commander', 'supervisor']);
     }
 
-    public function update(User $user, Personnel $personnel): bool
+    public function update(User $user, User $personnel): bool
     {
         return $user->hasRole(['admin', 'commander', 'supervisor']);
     }
 
-    public function delete(User $user, Personnel $personnel): bool
+    public function delete(User $user, User $personnel): bool
     {
         return $user->isAdmin();
     }

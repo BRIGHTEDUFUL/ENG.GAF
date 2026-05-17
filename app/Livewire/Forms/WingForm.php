@@ -8,11 +8,18 @@ use Livewire\Form;
 
 class WingForm extends Form
 {
-    #[Rule('required|string|max:150')]
-    public string $name = '';
+    public ?Wing $wing = null;
 
-    #[Rule('required|string|max:20')]
+    public string $name = '';
     public string $code = '';
+
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string|max:150|unique:wings,name,' . ($this->wing?->id ?? 'NULL'),
+            'code' => 'required|string|max:20|unique:wings,code,' . ($this->wing?->id ?? 'NULL'),
+        ];
+    }
 
     #[Rule('required|string|max:255')]
     public string $base_location = '';
@@ -31,6 +38,7 @@ class WingForm extends Form
 
     public function setWing(Wing $wing): void
     {
+        $this->wing             = $wing;
         $this->name             = $wing->name;
         $this->code             = $wing->code;
         $this->base_location    = $wing->base_location;
@@ -42,6 +50,7 @@ class WingForm extends Form
 
     public function resetForm(): void
     {
+        $this->wing = null;
         $this->name = $this->code = $this->base_location = $this->established_date = $this->description = '';
         $this->commander_id = null;
         $this->status = 'active';

@@ -8,7 +8,7 @@ use App\Models\FlightLog;
 use App\Models\Incident;
 use App\Models\MaintenanceLog;
 use App\Models\MaintenanceTask;
-use App\Models\Personnel;
+use App\Models\User;
 use App\Models\Wing;
 use App\Policies\AircraftPolicy;
 use App\Policies\AuditLogPolicy;
@@ -60,7 +60,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(FlightLog::class, FlightLogPolicy::class);
         Gate::policy(Incident::class, IncidentPolicy::class);
         Gate::policy(AuditLog::class, AuditLogPolicy::class);
-        Gate::policy(Personnel::class, PersonnelPolicy::class);
+        Gate::policy(User::class, PersonnelPolicy::class); // Personnel Manager uses User model
         Gate::policy('report', \App\Policies\ReportPolicy::class);
     }
 }
